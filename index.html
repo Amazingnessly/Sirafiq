@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#A70F35">
+  <meta name="description" content="Sirāfiq, compagnon personnel d’apprentissage, de mémorisation et de progression.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sirāfiq">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Sirāfiq</title>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#accueil" aria-label="Accueil Sirāfiq">
+        <img src="./assets/logo-sirafiq-verrouille.png" alt="Logo Sirāfiq" class="brand-logo">
+      </a>
+      <div class="topbar-actions">
+        <span class="offline-badge" id="networkBadge" aria-live="polite">Vérification…</span>
+        <button class="icon-button" id="openDiagnostics" type="button" aria-label="Ouvrir le diagnostic">
+          <span aria-hidden="true">◌</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="mainContent" tabindex="-1">
+      <section class="view active" id="view-accueil" data-view="accueil" aria-labelledby="homeTitle">
+        <div class="hero">
+          <p class="eyebrow">Votre compagnon d’apprentissage</p>
+          <h1 id="homeTitle">Avancer avec clarté.</h1>
+          <p class="hero-copy">Le socle de Sirāfiq vérifie l’installation, le stockage local et le fonctionnement hors ligne avant d’accueillir les contenus, les vocaux et les mindmaps.</p>
+        </div>
+
+        <section class="session-card" aria-labelledby="sessionTitle">
+          <div class="session-light" aria-hidden="true"></div>
+          <div class="session-head">
+            <div>
+              <p class="section-kicker">Aujourd’hui</p>
+              <h2 id="sessionTitle">Préparer votre environnement</h2>
+            </div>
+            <span class="status-pill status-current">Lot 0</span>
+          </div>
+          <p class="session-copy">Cette première étape confirme que Sirāfiq peut fonctionner correctement sur votre appareil, sans prétendre que les fonctions suivantes sont déjà disponibles.</p>
+          <div class="progress-line" aria-label="Progression du socle">
+            <span id="setupProgress"></span>
+          </div>
+          <div class="session-meta">
+            <span id="setupProgressText">0 vérification terminée</span>
+            <span>Données locales</span>
+          </div>
+          <button class="primary-button" id="startDiagnostic" type="button">
+            <span>Lancer le diagnostic</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </section>
+
+        <section class="section-block" aria-labelledby="horizonsTitle">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Les quatre horizons</p>
+              <h2 id="horizonsTitle">Une architecture claire</h2>
+            </div>
+          </div>
+          <div class="horizon-grid">
+            <button class="horizon-card" type="button" data-go="memoriser">
+              <span class="horizon-icon">M</span>
+              <span><strong>Mémoriser</strong><small>Import et exercices au Lot 1–4</small></span>
+              <span aria-hidden="true">›</span>
+            </button>
+            <button class="horizon-card" type="button" data-go="prononcer">
+              <span class="horizon-icon">P</span>
+              <span><strong>Prononcer</strong><small>Enregistrement au Lot 2</small></span>
+              <span aria-hidden="true">›</span>
+            </button>
+            <button class="horizon-card" type="button" data-go="ecrire">
+              <span class="horizon-icon">É</span>
+              <span><strong>Écrire</strong><small>Tracé guidé après le socle</small></span>
+              <span aria-hidden="true">›</span>
+            </button>
+            <button class="horizon-card" type="button" data-go="progres">
+              <span class="horizon-icon">↗</span>
+              <span><strong>Progrès</strong><small>Historique local du diagnostic</small></span>
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="section-block" aria-labelledby="activityTitle">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">État réel</p>
+              <h2 id="activityTitle">Ce qui fonctionne maintenant</h2>
+            </div>
+          </div>
+          <div class="truth-list">
+            <div class="truth-item"><span class="truth-dot ready"></span><div><strong>Navigation et interface responsive</strong><p>Les cinq sections sont accessibles sur iPhone et iPad.</p></div></div>
+            <div class="truth-item"><span class="truth-dot ready"></span><div><strong>Stockage local vérifiable</strong><p>Une donnée de test peut être écrite puis relue dans IndexedDB.</p></div></div>
+            <div class="truth-item"><span class="truth-dot pending"></span><div><strong>Import de supports et microphone</strong><p>Ces fonctions appartiennent aux Lots 1 et 2 et ne sont pas simulées ici.</p></div></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" id="view-memoriser" data-view="memoriser" aria-labelledby="memoryTitle" hidden>
+        <div class="page-intro">
+          <p class="eyebrow">Mémoriser</p>
+          <h1 id="memoryTitle">Le parcours sera construit sur des fonctions réelles.</h1>
+          <p>Import, passages, révision quotidienne et exercices seront ajoutés dans l’ordre prévu. Aucun texte à trous et aucune remise en ordre ne seront intégrés.</p>
+        </div>
+        <div class="roadmap-list">
+          <article class="roadmap-card current"><span>01</span><div><strong>Import réel des supports</strong><p>PDF, image, texte et audio depuis Fichiers ou Photos.</p></div><em>Prochain lot</em></article>
+          <article class="roadmap-card"><span>02</span><div><strong>Passages verrouillés</strong><p>Texte original préservé, sélection et vérification de la source.</p></div><em>Planifié</em></article>
+          <article class="roadmap-card"><span>03</span><div><strong>Exercices rigoureux</strong><p>Lecture fragmentée, masquage progressif, révélation ciblée et restitution vocale.</p></div><em>Planifié</em></article>
+          <article class="roadmap-card"><span>04</span><div><strong>Mindmaps dynamiques</strong><p>Création depuis un texte ou une sélection, avec lien vers chaque extrait source.</p></div><em>Planifié</em></article>
+        </div>
+      </section>
+
+      <section class="view" id="view-prononcer" data-view="prononcer" aria-labelledby="pronounceTitle" hidden>
+        <div class="page-intro">
+          <p class="eyebrow">Prononcer</p>
+          <h1 id="pronounceTitle">Le microphone sera validé avant toute promesse.</h1>
+          <p>Le Lot 0 vérifie seulement la présence des API nécessaires. Le véritable enregistreur, avec pause, reprise, réécoute et persistance, arrivera au Lot 2.</p>
+        </div>
+        <div class="feature-preview">
+          <div class="pulse-orb" aria-hidden="true"><span></span></div>
+          <div>
+            <p class="section-kicker">Prévisualisation fonctionnelle</p>
+            <h2>Diagnostic audio</h2>
+            <p>Le diagnostic indique si la page est sécurisée et si le navigateur expose les fonctions audio. Il ne demande pas encore l’autorisation du microphone.</p>
+          </div>
+        </div>
+        <button class="secondary-button" type="button" data-open-diagnostic>Vérifier la compatibilité audio</button>
+      </section>
+
+      <section class="view" id="view-ecrire" data-view="ecrire" aria-labelledby="writeTitle" hidden>
+        <div class="page-intro">
+          <p class="eyebrow">Écrire</p>
+          <h1 id="writeTitle">Une surface tactile préparée pour le stylet ou le doigt.</h1>
+          <p>Le moteur d’écriture n’est pas encore livré. Le diagnostic vérifie toutefois la prise en charge des événements tactiles et du stylet, sans dépendre de la pression ou de l’inclinaison.</p>
+        </div>
+        <div class="gesture-panel">
+          <div class="gesture-line line-one"></div>
+          <div class="gesture-line line-two"></div>
+          <div class="gesture-line line-three"></div>
+          <div class="gesture-marker"></div>
+          <p>Tracé guidé au futur lot d’écriture</p>
+        </div>
+        <button class="secondary-button" type="button" data-open-diagnostic>Vérifier la compatibilité tactile</button>
+      </section>
+
+      <section class="view" id="view-progres" data-view="progres" aria-labelledby="progressTitle" hidden>
+        <div class="page-intro">
+          <p class="eyebrow">Progrès</p>
+          <h1 id="progressTitle">Un historique local, sans compte ni cloud.</h1>
+          <p>À ce stade, Sirāfiq enregistre uniquement les diagnostics exécutés sur cet appareil. Les progrès pédagogiques seront ajoutés avec les moteurs d’apprentissage.</p>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card"><span>Diagnostics</span><strong id="diagnosticCount">0</strong><small>sur cet appareil</small></article>
+          <article class="metric-card"><span>Dernier contrôle</span><strong id="lastDiagnostic">—</strong><small>stocké localement</small></article>
+          <article class="metric-card"><span>Mode réseau</span><strong id="networkMetric">—</strong><small>état actuel</small></article>
+        </div>
+        <button class="secondary-button" id="clearHistory" type="button">Effacer l’historique de diagnostic</button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navigation principale">
+      <a href="#accueil" data-nav="accueil" class="active"><span aria-hidden="true">⌂</span><small>Accueil</small></a>
+      <a href="#memoriser" data-nav="memoriser"><span aria-hidden="true">◐</span><small>Mémoriser</small></a>
+      <a href="#prononcer" data-nav="prononcer"><span aria-hidden="true">◉</span><small>Prononcer</small></a>
+      <a href="#ecrire" data-nav="ecrire"><span aria-hidden="true">✎</span><small>Écrire</small></a>
+      <a href="#progres" data-nav="progres"><span aria-hidden="true">↗</span><small>Progrès</small></a>
+    </nav>
+  </div>
+
+  <dialog id="diagnosticDialog" class="diagnostic-dialog" aria-labelledby="diagnosticTitle">
+    <div class="dialog-header">
+      <div>
+        <p class="section-kicker">Diagnostic du socle</p>
+        <h2 id="diagnosticTitle">Vérifier l’appareil</h2>
+      </div>
+      <button class="icon-button" id="closeDiagnostics" type="button" aria-label="Fermer">×</button>
+    </div>
+    <p class="dialog-copy">Ces tests n’envoient aucune donnée. Ils vérifient les fonctions disponibles dans ce navigateur.</p>
+    <div class="diagnostic-list" id="diagnosticList" aria-live="polite"></div>
+    <div class="dialog-actions">
+      <button class="primary-button" id="runDiagnostic" type="button">Exécuter les tests</button>
+      <button class="secondary-button" id="saveLocalTest" type="button">Tester le stockage local</button>
+    </div>
+    <p class="diagnostic-note" id="diagnosticNote" aria-live="polite"></p>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

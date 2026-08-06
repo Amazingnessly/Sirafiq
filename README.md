@@ -1,43 +1,28 @@
-# Sirāfiq
+# Sirāfiq — Lot 0 fonctionnel
 
-Sirāfiq est un projet de PWA personnelle pour iPhone et iPad, centré sur la révision quotidienne, la mémorisation, les mindmaps dynamiques, l’enregistrement vocal, la prononciation et l’écriture.
+Ce lot installe le socle réel de la PWA Sirāfiq :
 
-## État actuel du dépôt
+- navigation responsive Accueil, Mémoriser, Prononcer, Écrire et Progrès ;
+- manifeste installable ;
+- service worker et cache hors ligne ;
+- base IndexedDB locale ;
+- écran de diagnostic ;
+- identité visuelle rubis et logo verrouillé ;
+- aucun import ou enregistrement simulé.
 
-Ce dépôt contient désormais le **cahier d’architecture officiel** et les décisions produit validées. Le code applicatif présent dans l’ancienne archive n’est pas une version fonctionnelle complète : plusieurs ressources auxquelles `index.html` fait référence manquent encore. Il ne faut donc pas considérer cette branche comme une version prête à l’usage.
+## État des fonctions
 
-Le prochain développement doit commencer par le lot 0, puis les lots 1 et 2 :
+Le Lot 0 ne contient pas encore l’import de supports ni le véritable enregistreur. Ces fonctions appartiennent aux Lots 1 et 2. Les écrans les présentent explicitement comme planifiées.
 
-1. assainissement du socle PWA ;
-2. import réel et persistance locale ;
-3. enregistrement vocal et bibliothèque.
+## Déploiement GitHub Pages
 
-Aucune finition secondaire ne doit passer avant la réussite de ces parcours sur Safari iPad.
+Après avoir ajouté ces fichiers à la racine du dépôt :
 
-## Documentation
+1. ouvrir **Settings → Pages** ;
+2. choisir **Deploy from a branch** ;
+3. sélectionner `main` et `/(root)` ;
+4. enregistrer.
 
-- [Architecture fonctionnelle](docs/ARCHITECTURE.md)
-- [Modèle de données](docs/MODELE_DONNEES.md)
-- [Parcours utilisateur](docs/PARCOURS_UTILISATEUR.md)
-- [Spécification des mindmaps](docs/SPEC_MINDMAPS.md)
-- [Roadmap](docs/ROADMAP.md)
-- [Tests d’acceptation](docs/TESTS_ACCEPTATION.md)
-- [Décisions verrouillées](docs/DECISIONS_VERROUILLEES.md)
-- [État technique du dépôt](STATUS_TECHNIQUE.md)
-- [Exercices validés](EXERCICES_VALIDES.md)
+## Données
 
-## Principes non négociables
-
-- texte original préservé ;
-- données locales et hors ligne ;
-- aucun compte ;
-- aucune suppression automatique des vocaux ;
-- mindmaps reliées aux extraits sources ;
-- aucun texte à trous ;
-- aucune remise en ordre de fragments ;
-- aucune interprétation automatique du Coran ;
-- interface dynamique, rigoureuse, attrayante et non infantile.
-
-## Méthode de développement
-
-Chaque fonctionnalité doit être livrée sous forme de parcours vertical testable : action utilisateur, stockage, reprise après fermeture, gestion des erreurs et test sur iPad. Une interface qui affiche un bouton sans fournir le parcours complet n’est pas une fonctionnalité terminée.
+Les diagnostics sont conservés uniquement dans IndexedDB sur l’appareil. Aucun compte, cloud ou suivi externe n’est utilisé.
