@@ -1,4 +1,7 @@
-import { addDiagnostic, clearDiagnostics, listDiagnostics, testIndexedDbAvailability, writeLocalProbe } from './db.js';
+import {
+  addDiagnostic, clearDiagnostics, listDiagnostics, testIndexedDbAvailability, writeLocalProbe,
+  countSupports, countRecordings, countWritings
+} from './db.js';
 
 const views = [...document.querySelectorAll('[data-view]')];
 const navItems = [...document.querySelectorAll('[data-nav]')];
@@ -15,9 +18,9 @@ const diagnosticDefinitions = [
   { key: 'secure', label: 'Contexte sécurisé', detail: 'Requis pour le microphone et la PWA' },
   { key: 'serviceWorker', label: 'Service worker', detail: 'Permet le mode hors ligne' },
   { key: 'indexedDb', label: 'Stockage IndexedDB', detail: 'Conserve les données localement' },
-  { key: 'mediaDevices', label: 'Fonctions audio', detail: 'Prépare le futur enregistreur' },
-  { key: 'pointerEvents', label: 'Tactile et stylet', detail: 'Prépare le futur module d’écriture' },
-  { key: 'fileInput', label: 'Sélection de fichiers', detail: 'Prépare le futur import de supports' },
+  { key: 'mediaDevices', label: 'Microphone', detail: 'Nécessaire à l’enregistreur local' },
+  { key: 'pointerEvents', label: 'Tactile et stylet', detail: 'Nécessaire à la surface d’écriture' },
+  { key: 'fileInput', label: 'Sélection de fichiers', detail: 'Nécessaire à l’import de supports' },
   { key: 'installed', label: 'Mode application', detail: 'Indique si Sirāfiq est ouvert depuis l’écran d’accueil' }
 ];
 
@@ -124,16 +127,32 @@ async function testLocalStorage() {
 
 async function refreshProgress() {
   try {
-    const records = await listDiagnostics();
-    document.getElementById('diagnosticCount').textContent = String(records.length);
+    const [records, supportCount, recordingCount, writingCount] = await Promise.all([
+      listDiagnostics(), countSupports(), countRecordings(), countWritings()
+    ]);
+    const diagnosticCount = document.getElementById('diagnosticCount');
+    const lastDiagnostic = document.getElementById('lastDiagnostic');
+    const supportMetric = document.getElementById('supportCountMetric');
+    const recordingMetric = document.getElementById('recordingCountMetric');
+    const writingMetric = document.getElementById('writingCountMetric');
+    if (diagnosticCount) diagnosticCount.textContent = String(records.length);
+    if (supportMetric) supportMetric.textContent = String(supportCount || 0);
+    if (recordingMetric) recordingMetric.textContent = String(recordingCount || 0);
+    if (writingMetric) writingMetric.textContent = String(writingCount || 0);
     if (records.length) {
       const last = records.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-      document.getElementById('lastDiagnostic').textContent = new Date(last.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+      if (lastDiagnostic) lastDiagnostic.textContent = new Date(last.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
       progressBar.style.width = `${Math.round((last.passed / diagnosticDefinitions.length) * 100)}%`;
       progressText.textContent = `${last.passed} vérification${last.passed > 1 ? 's' : ''} réussie${last.passed > 1 ? 's' : ''} sur ${diagnosticDefinitions.length}`;
+    } else {
+      if (lastDiagnostic) lastDiagnostic.textContent = '—';
+      progressBar.style.width = '0%';
+      progressText.textContent = '0 vérification terminée';
     }
-  } catch {
-    document.getElementById('diagnosticCount').textContent = '—';
+  } catch (error) {
+    console.warn('Progression locale indisponible', error);
+    const diagnosticCount = document.getElementById('diagnosticCount');
+    if (diagnosticCount) diagnosticCount.textContent = '—';
   }
 }
 
@@ -161,6 +180,7 @@ async function registerServiceWorker() {
 window.addEventListener('hashchange', renderRoute);
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
+window.addEventListener('sirafiq:data-changed', refreshProgress);
 document.getElementById('openDiagnostics').addEventListener('click', openDialog);
 document.getElementById('startDiagnostic').addEventListener('click', () => { openDialog(); runDiagnostics(); });
 document.querySelectorAll('[data-open-diagnostic]').forEach(button => button.addEventListener('click', openDialog));

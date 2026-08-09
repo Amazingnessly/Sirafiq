@@ -1,36 +1,30 @@
-# État technique du dépôt
+# État technique — stabilisation v2
 
-## Contrôle effectué
+## Problèmes trouvés dans l’archive auditée
 
-Le dossier a été inspecté avant la formalisation de l’architecture.
+- `writing.js` était vide (0 octet) alors que l’interface d’écriture était affichée ;
+- le service worker ne mettait pas en cache `lot1.js` ni `writing.js` et utilisait encore un cache `lot0` ;
+- l’écran Prononcer était un placeholder sans enregistreur ;
+- plusieurs composants de la bibliothèque existaient sans styles adaptés ;
+- l’écran Progrès ne reflétait pas l’activité réellement enregistrée ;
+- la documentation ne correspondait plus au code du dépôt.
 
-`index.html` référence actuellement les ressources suivantes :
+## Corrections v2
 
-- `manifest.webmanifest` ;
-- `assets/apple-touch-icon.png` ;
-- `assets/icon-192.png` ;
-- `assets/logo-locked.png` ;
-- `styles.css` ;
-- `app.js`.
+- base IndexedDB migrée en version 4 avec stores supports, enregistrements et tracés ;
+- moteur d’écriture tactile/stylet réel ;
+- enregistreur audio local réel ;
+- visualiseur de supports ;
+- progression locale synchronisée ;
+- cache PWA versionné et cohérent ;
+- interface responsive stabilisée.
 
-Ces ressources ne sont pas présentes dans l’archive contrôlée. Dans cet état, la page ne peut pas charger l’application prévue.
+## Contrôles exécutés
 
-## Conséquence
+- syntaxe de tous les fichiers JavaScript : OK ;
+- aucun ID HTML dupliqué ;
+- toutes les références DOM critiques résolues ;
+- parcours UI automatisé : navigation, diagnostic, import, aperçu support, écriture, sauvegarde tracé, enregistrement audio simulé, sauvegarde audio et compteurs : OK ;
+- contrôle d’overflow aux largeurs 390, 768 et 1024 px : OK.
 
-L’ancienne archive ne doit pas être présentée comme une PWA fonctionnelle ou prête au déploiement. Les documents d’architecture sont exploitables, mais le socle applicatif doit être reconstruit et testé.
-
-## Prochaine étape technique
-
-Créer une branche de développement pour le lot 0 avec :
-
-- structure complète des fichiers ;
-- manifeste valide ;
-- icônes et logo verrouillé ;
-- feuille de style ;
-- point d’entrée JavaScript ;
-- base IndexedDB versionnée ;
-- service worker ;
-- écran de diagnostic ;
-- test de chargement en ligne et hors ligne.
-
-Le lot 0 ne sera validé qu’après vérification sur l’URL GitHub Pages et sur l’icône ajoutée à l’écran d’accueil.
+La permission microphone et le comportement du stylet doivent toujours être confirmés une fois sur l’iPad réel après déploiement, car un test automatisé ne remplace pas le matériel.

@@ -1,54 +1,22 @@
-const CACHE_NAME = 'sirafiq-lot0-v1';
+const CACHE_NAME = 'sirafiq-shell-v2';
 const APP_FILES = [
-  './',
-  './index.html',
-  './styles.css',
-  './app.js',
-  './db.js',
-  './manifest.webmanifest',
-  './assets/logo-sirafiq-verrouille.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/apple-touch-icon.png'
+  './', './index.html', './styles.css?v=2', './app.js?v=2', './db.js', './lot1.js?v=2',
+  './writing.js?v=2', './pronunciation.js?v=2', './manifest.webmanifest',
+  './assets/logo-sirafiq-verrouille.png', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'
 ];
-
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES)).then(() => self.skipWaiting()));
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
-      .then(() => self.clients.claim())
-  );
-});
-
+self.addEventListener('install', event => event.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(APP_FILES)).then(() => self.skipWaiting())));
+self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))).then(() => self.clients.claim())));
+async function networkFirst(request) {
+  const cache = await caches.open(CACHE_NAME);
+  try { const response = await fetch(request); if (response.ok) cache.put(request, response.clone()); return response; }
+  catch { const cached = await cache.match(request) || await cache.match(request, { ignoreSearch: true }); if (cached) return cached; throw new Error('Ressource indisponible hors ligne'); }
+}
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-  const requestUrl = new URL(event.request.url);
-  if (requestUrl.origin !== self.location.origin) return;
-
+  const url = new URL(event.request.url); if (url.origin !== self.location.origin) return;
   if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put('./index.html', copy));
-          return response;
-        })
-        .catch(() => caches.match('./index.html'))
-    );
+    event.respondWith(networkFirst(event.request).catch(async () => (await caches.open(CACHE_NAME)).match('./index.html')));
     return;
   }
-
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      if (response.ok) {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-      }
-      return response;
-    }))
-  );
+  event.respondWith(networkFirst(event.request));
 });

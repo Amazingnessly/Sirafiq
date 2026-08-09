@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=2">
   <title>Sirāfiq</title>
 </head>
 <body>
@@ -36,7 +36,7 @@
         <div class="hero">
           <p class="eyebrow">Votre compagnon d’apprentissage</p>
           <h1 id="homeTitle">Avancer avec clarté.</h1>
-          <p class="hero-copy">Le socle de Sirāfiq vérifie l’installation, le stockage local et le fonctionnement hors ligne avant d’accueillir les contenus, les vocaux et les mindmaps.</p>
+          <p class="hero-copy">Sirāfiq conserve vos supports, vos enregistrements et vos tracés localement sur cet appareil. Le diagnostic vérifie les fonctions nécessaires au fonctionnement de l’application.</p>
         </div>
 
         <section class="session-card" aria-labelledby="sessionTitle">
@@ -46,9 +46,9 @@
               <p class="section-kicker">Aujourd’hui</p>
               <h2 id="sessionTitle">Préparer votre environnement</h2>
             </div>
-            <span class="status-pill status-current">Lot 0</span>
+            <span class="status-pill status-current">Local</span>
           </div>
-          <p class="session-copy">Cette première étape confirme que Sirāfiq peut fonctionner correctement sur votre appareil, sans prétendre que les fonctions suivantes sont déjà disponibles.</p>
+          <p class="session-copy">Vérifiez en une fois le stockage local, le fonctionnement hors ligne, le microphone et la prise en charge tactile de votre appareil.</p>
           <div class="progress-line" aria-label="Progression du socle">
             <span id="setupProgress"></span>
           </div>
@@ -72,22 +72,22 @@
           <div class="horizon-grid">
             <button class="horizon-card" type="button" data-go="memoriser">
               <span class="horizon-icon">M</span>
-              <span><strong>Mémoriser</strong><small>Import et exercices au Lot 1–4</small></span>
+              <span><strong>Mémoriser</strong><small>Bibliothèque locale de supports</small></span>
               <span aria-hidden="true">›</span>
             </button>
             <button class="horizon-card" type="button" data-go="prononcer">
               <span class="horizon-icon">P</span>
-              <span><strong>Prononcer</strong><small>Enregistrement au Lot 2</small></span>
+              <span><strong>Prononcer</strong><small>Enregistrer et réécouter</small></span>
               <span aria-hidden="true">›</span>
             </button>
             <button class="horizon-card" type="button" data-go="ecrire">
               <span class="horizon-icon">É</span>
-              <span><strong>Écrire</strong><small>Tracé guidé après le socle</small></span>
+              <span><strong>Écrire</strong><small>Tracer au doigt ou au stylet</small></span>
               <span aria-hidden="true">›</span>
             </button>
             <button class="horizon-card" type="button" data-go="progres">
               <span class="horizon-icon">↗</span>
-              <span><strong>Progrès</strong><small>Historique local du diagnostic</small></span>
+              <span><strong>Progrès</strong><small>Activité conservée sur cet appareil</small></span>
               <span aria-hidden="true">›</span>
             </button>
           </div>
@@ -103,71 +103,131 @@
           <div class="truth-list">
             <div class="truth-item"><span class="truth-dot ready"></span><div><strong>Navigation et interface responsive</strong><p>Les cinq sections sont accessibles sur iPhone et iPad.</p></div></div>
             <div class="truth-item"><span class="truth-dot ready"></span><div><strong>Stockage local vérifiable</strong><p>Une donnée de test peut être écrite puis relue dans IndexedDB.</p></div></div>
-            <div class="truth-item"><span class="truth-dot pending"></span><div><strong>Import de supports et microphone</strong><p>Ces fonctions appartiennent aux Lots 1 et 2 et ne sont pas simulées ici.</p></div></div>
+            <div class="truth-item"><span class="truth-dot ready"></span><div><strong>Supports, audio et écriture</strong><p>Import local, enregistrement microphone et tracé tactile sont disponibles sans compte ni cloud.</p></div></div>
           </div>
         </section>
       </section>
 
-      <section class="view" id="view-memoriser" data-view="memoriser" aria-labelledby="memoryTitle" hidden>
-        <div class="page-intro">
-          <p class="eyebrow">Mémoriser</p>
-          <h1 id="memoryTitle">Le parcours sera construit sur des fonctions réelles.</h1>
-          <p>Import, passages, révision quotidienne et exercices seront ajoutés dans l’ordre prévu. Aucun texte à trous et aucune remise en ordre ne seront intégrés.</p>
-        </div>
-        <div class="roadmap-list">
-          <article class="roadmap-card current"><span>01</span><div><strong>Import réel des supports</strong><p>PDF, image, texte et audio depuis Fichiers ou Photos.</p></div><em>Prochain lot</em></article>
-          <article class="roadmap-card"><span>02</span><div><strong>Passages verrouillés</strong><p>Texte original préservé, sélection et vérification de la source.</p></div><em>Planifié</em></article>
-          <article class="roadmap-card"><span>03</span><div><strong>Exercices rigoureux</strong><p>Lecture fragmentée, masquage progressif, révélation ciblée et restitution vocale.</p></div><em>Planifié</em></article>
-          <article class="roadmap-card"><span>04</span><div><strong>Mindmaps dynamiques</strong><p>Création depuis un texte ou une sélection, avec lien vers chaque extrait source.</p></div><em>Planifié</em></article>
-        </div>
-      </section>
+      
+<section class="view" id="view-memoriser" data-view="memoriser" aria-labelledby="memoryTitle" hidden>
+  <div class="page-intro library-intro">
+    <div>
+      <p class="eyebrow">Mémoriser</p>
+      <h1 id="memoryTitle">Bibliothèque de supports</h1>
+      <p>Importez un PDF, une image, un texte ou un audio. Le fichier original reste conservé localement sur cet appareil.</p>
+    </div>
 
-      <section class="view" id="view-prononcer" data-view="prononcer" aria-labelledby="pronounceTitle" hidden>
-        <div class="page-intro">
-          <p class="eyebrow">Prononcer</p>
-          <h1 id="pronounceTitle">Le microphone sera validé avant toute promesse.</h1>
-          <p>Le Lot 0 vérifie seulement la présence des API nécessaires. Le véritable enregistreur, avec pause, reprise, réécoute et persistance, arrivera au Lot 2.</p>
-        </div>
-        <div class="feature-preview">
-          <div class="pulse-orb" aria-hidden="true"><span></span></div>
-          <div>
-            <p class="section-kicker">Prévisualisation fonctionnelle</p>
-            <h2>Diagnostic audio</h2>
-            <p>Le diagnostic indique si la page est sécurisée et si le navigateur expose les fonctions audio. Il ne demande pas encore l’autorisation du microphone.</p>
-          </div>
-        </div>
-        <button class="secondary-button" type="button" data-open-diagnostic>Vérifier la compatibilité audio</button>
-      </section>
+    <button class="primary-button compact-primary" id="libraryImportButton" type="button">
+      <span>Importer un support</span>
+      <span aria-hidden="true">＋</span>
+    </button>
+  </div>
 
-      <section class="view" id="view-ecrire" data-view="ecrire" aria-labelledby="writeTitle" hidden>
-        <div class="page-intro">
-          <p class="eyebrow">Écrire</p>
-          <h1 id="writeTitle">Une surface tactile préparée pour le stylet ou le doigt.</h1>
-          <p>Le moteur d’écriture n’est pas encore livré. Le diagnostic vérifie toutefois la prise en charge des événements tactiles et du stylet, sans dépendre de la pression ou de l’inclinaison.</p>
-        </div>
-        <div class="gesture-panel">
-          <div class="gesture-line line-one"></div>
-          <div class="gesture-line line-two"></div>
-          <div class="gesture-line line-three"></div>
-          <div class="gesture-marker"></div>
-          <p>Tracé guidé au futur lot d’écriture</p>
-        </div>
-        <button class="secondary-button" type="button" data-open-diagnostic>Vérifier la compatibilité tactile</button>
-      </section>
+  <div class="library-toolbar">
+    <label class="search-field">
+      <span class="sr-only">Rechercher un support</span>
+      <input id="supportSearch" type="search" placeholder="Rechercher un support…">
+    </label>
+
+    <label class="filter-field">
+      <span class="sr-only">Filtrer par catégorie</span>
+      <select id="supportCategoryFilter">
+        <option value="">Toutes les catégories</option>
+        <option value="Qour’ān">Qour’ān</option>
+        <option value="Français">Français</option>
+        <option value="Arabe">Arabe</option>
+        <option value="Prononciation">Prononciation</option>
+        <option value="Écriture">Écriture</option>
+        <option value="Cours">Cours</option>
+        <option value="Autre">Autre</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="library-summary">
+    <span id="libraryCount">0 support</span>
+    <span id="libraryBytes">0 o</span>
+  </div>
+
+  <div class="empty-state" id="libraryEmpty">
+    <div class="empty-symbol" aria-hidden="true">＋</div>
+    <h2>Aucun support importé</h2>
+    <p>Commencez par un PDF, une image, un fichier texte ou un audio.</p>
+    <button class="secondary-button" id="emptyImportButton" type="button">
+      Choisir un support
+    </button>
+  </div>
+
+  <div class="support-grid" id="supportGrid" aria-live="polite"></div>
+</section>
+
+
+<section class="view" id="view-prononcer" data-view="prononcer" aria-labelledby="pronounceTitle" hidden>
+  <div class="page-intro">
+    <p class="eyebrow">Prononcer</p>
+    <h1 id="pronounceTitle">Enregistrer, réécouter, recommencer.</h1>
+    <p>Le microphone est utilisé uniquement pendant vos prises. Les enregistrements que vous choisissez de conserver restent dans le stockage local de cet appareil.</p>
+  </div>
+  <section class="recorder-card" aria-labelledby="recorderTitle">
+    <div class="recorder-head"><div><p class="section-kicker">Enregistreur local</p><h2 id="recorderTitle">Nouvelle prise</h2></div><strong class="record-timer" id="recordTimer">00:00</strong></div>
+    <label class="record-title-field"><span>Titre</span><input id="recordTitle" type="text" maxlength="160" placeholder="Ex. Lecture du passage 1"></label>
+    <div class="recorder-actions">
+      <button class="primary-button compact-action" id="recordStart" type="button">Enregistrer</button>
+      <button class="secondary-button" id="recordPause" type="button" disabled>Pause</button>
+      <button class="secondary-button" id="recordStop" type="button" disabled>Terminer</button>
+      <button class="secondary-button" id="recordSave" type="button" disabled>Conserver</button>
+    </div>
+    <div class="record-preview" id="recordPreview"></div>
+    <p class="diagnostic-note inline-note" id="recordStatus" aria-live="polite">Prêt à enregistrer.</p>
+  </section>
+  <section class="section-block" aria-labelledby="recordingLibraryTitle">
+    <div class="section-heading"><div><p class="section-kicker">Bibliothèque audio</p><h2 id="recordingLibraryTitle">Enregistrements conservés</h2></div></div>
+    <div class="recording-library" id="recordingLibrary" aria-live="polite"></div>
+  </section>
+</section>
+
+      
+<section class="view" id="view-ecrire" data-view="ecrire" aria-labelledby="writeTitle" hidden>
+  <div class="page-intro">
+    <p class="eyebrow">Écrire</p>
+    <h1 id="writeTitle">Écrire au doigt ou au stylet.</h1>
+    <p>Tracez librement sur la surface ci-dessous. Les traits restent uniquement sur cet appareil.</p>
+  </div>
+
+  <div class="writing-toolbar">
+    <button class="secondary-button" id="clearWriting" type="button">Effacer</button>
+    <button class="secondary-button" id="undoWriting" type="button">Annuler</button>
+    <button class="primary-button" id="saveWriting" type="button">Enregistrer</button>
+  </div>
+
+  <div class="writing-surface">
+    <canvas id="writingCanvas" aria-label="Zone d’écriture tactile"></canvas>
+  </div>
+
+  <p class="diagnostic-note inline-note" id="writingStatus" aria-live="polite"></p>
+  <section class="section-block" aria-labelledby="writingGalleryTitle">
+    <div class="section-heading"><div><p class="section-kicker">Tracés locaux</p><h2 id="writingGalleryTitle">Tracés enregistrés</h2></div></div>
+    <div class="writing-gallery" id="writingGallery" aria-live="polite"></div>
+  </section>
+</section>
+
 
       <section class="view" id="view-progres" data-view="progres" aria-labelledby="progressTitle" hidden>
-        <div class="page-intro">
-          <p class="eyebrow">Progrès</p>
-          <h1 id="progressTitle">Un historique local, sans compte ni cloud.</h1>
-          <p>À ce stade, Sirāfiq enregistre uniquement les diagnostics exécutés sur cet appareil. Les progrès pédagogiques seront ajoutés avec les moteurs d’apprentissage.</p>
-        </div>
-        <div class="metric-grid">
-          <article class="metric-card"><span>Diagnostics</span><strong id="diagnosticCount">0</strong><small>sur cet appareil</small></article>
-          <article class="metric-card"><span>Dernier contrôle</span><strong id="lastDiagnostic">—</strong><small>stocké localement</small></article>
-          <article class="metric-card"><span>Mode réseau</span><strong id="networkMetric">—</strong><small>état actuel</small></article>
-        </div>
-        <button class="secondary-button" id="clearHistory" type="button">Effacer l’historique de diagnostic</button>
-      </section>
+  <div class="page-intro">
+    <p class="eyebrow">Progrès</p>
+    <h1 id="progressTitle">Votre activité locale en un coup d’œil.</h1>
+    <p>Cette vue compte uniquement ce qui est réellement conservé sur cet appareil. Aucun compte ni cloud n’est utilisé.</p>
+  </div>
+  <div class="metric-grid progress-metrics">
+    <article class="metric-card"><span>Supports</span><strong id="supportCountMetric">0</strong><small>dans Mémoriser</small></article>
+    <article class="metric-card"><span>Enregistrements</span><strong id="recordingCountMetric">0</strong><small>dans Prononcer</small></article>
+    <article class="metric-card"><span>Tracés</span><strong id="writingCountMetric">0</strong><small>dans Écrire</small></article>
+    <article class="metric-card"><span>Diagnostics</span><strong id="diagnosticCount">0</strong><small>sur cet appareil</small></article>
+    <article class="metric-card"><span>Dernier contrôle</span><strong id="lastDiagnostic">—</strong><small>stocké localement</small></article>
+    <article class="metric-card"><span>Mode réseau</span><strong id="networkMetric">—</strong><small>état actuel</small></article>
+  </div>
+  <button class="secondary-button" id="clearHistory" type="button">Effacer l’historique de diagnostic</button>
+</section>
     </main>
 
     <nav class="bottom-nav" aria-label="Navigation principale">
@@ -199,6 +259,99 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js?v=2"></script>
+
+<input id="filePicker"
+       type="file"
+       multiple
+       hidden
+       accept=".pdf,.txt,.md,.markdown,.rtf,.doc,.docx,.odt,.json,.csv,image/*,audio/*,application/pdf,text/*">
+
+<input id="photoPicker"
+       type="file"
+       multiple
+       hidden
+       accept="image/*">
+
+<dialog class="import-dialog" id="importDialog" aria-labelledby="importDialogTitle">
+  <div class="dialog-header">
+    <div>
+      <p class="section-kicker">Importer</p>
+      <h2 id="importDialogTitle">Ajouter un support</h2>
+    </div>
+    <button class="icon-button" id="closeImportDialog" type="button" aria-label="Fermer">×</button>
+  </div>
+
+  <div class="import-source-grid" id="importSourceStep">
+    <button class="source-choice" id="chooseFilesButton" type="button">
+      <span class="source-icon">▤</span>
+      <strong>Fichiers</strong>
+      <small>PDF, texte, document ou audio</small>
+    </button>
+
+    <button class="source-choice" id="choosePhotosButton" type="button">
+      <span class="source-icon">▧</span>
+      <strong>Photos</strong>
+      <small>Image ou capture existante</small>
+    </button>
+  </div>
+
+  <div id="importReviewStep" hidden>
+    <div class="selected-files" id="selectedFiles"></div>
+
+    <div class="preview-layout">
+      <div class="preview-stage" id="previewStage">
+        <p>Sélectionnez un fichier pour afficher son aperçu.</p>
+      </div>
+
+      <div class="import-fields">
+        <label>
+          <span>Titre</span>
+          <input id="importTitle" type="text" maxlength="160">
+        </label>
+
+        <label>
+          <span>Catégorie</span>
+          <select id="importCategory">
+            <option value="Qour’ān">Qour’ān</option>
+            <option value="Français" selected>Français</option>
+            <option value="Arabe">Arabe</option>
+            <option value="Prononciation">Prononciation</option>
+            <option value="Écriture">Écriture</option>
+            <option value="Cours">Cours</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </label>
+
+        <dl class="file-metadata" id="fileMetadata"></dl>
+
+        <p class="privacy-note">
+          Le fichier ne sera enregistré qu’après confirmation et restera dans le stockage local de cet appareil.
+        </p>
+      </div>
+    </div>
+
+    <div class="dialog-actions import-actions">
+      <button class="secondary-button" id="addMoreFiles" type="button">
+        Ajouter d’autres fichiers
+      </button>
+      <button class="primary-button" id="saveSelectedFiles" type="button">
+        Enregistrer la sélection
+      </button>
+    </div>
+
+    <p class="diagnostic-note" id="importFeedback" aria-live="polite"></p>
+  </div>
+</dialog>
+
+
+<dialog class="support-viewer-dialog" id="supportViewerDialog" aria-labelledby="supportViewerTitle">
+  <div class="dialog-header"><div><p class="section-kicker">Support original</p><h2 id="supportViewerTitle">Aperçu</h2></div><button class="icon-button" id="closeSupportViewer" type="button" aria-label="Fermer">×</button></div>
+  <div class="support-viewer-body" id="supportViewerBody"></div>
+</dialog>
+
+  <script type="module" src="./lot1.js?v=2"></script>
+  <script type="module" src="./writing.js?v=2"></script>
+  <script type="module" src="./pronunciation.js?v=2"></script>
 </body>
 </html>
