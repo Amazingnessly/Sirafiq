@@ -588,3 +588,36 @@ button:disabled { opacity: .48; cursor: default; transform: none !important; box
 @media (max-width: 900px){.memory-pathways{grid-template-columns:1fr 1fr}.mindmap-studio{grid-template-columns:1fr}.mindmap-canvas{min-height:380px}.home-hero{grid-template-columns:1fr}.home-orbit{display:none}.split-heading{display:block}.section-aside{margin-top:8px}.momentum-grid{grid-template-columns:1fr}}
 @media (max-width: 700px){.world-grid,.memory-pathways{grid-template-columns:1fr}.today-plan{grid-template-columns:repeat(3,1fr)}.today-topline,.practice-path-head{display:block}.ready-chip,.evidence-chip{margin-top:12px}.home-hero h1{font-size:clamp(2.7rem,13vw,4.6rem)}.mindmap-canvas{min-height:340px}.mind-node{width:145px}.root-node{width:155px}}
 @media (max-width: 440px){.today-plan{grid-template-columns:1fr}.practice-prompt-card{grid-template-columns:1fr}.prompt-pulse{display:none}}
+
+/* Sirāfiq v6 — espaces dédiés, fluidité iPad et exercices */
+html { scroll-behavior:smooth; }
+body { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+.view { animation: viewEnter .28s cubic-bezier(.2,.75,.25,1); }
+@keyframes viewEnter { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.bottom-nav { padding-bottom:max(8px,env(safe-area-inset-bottom)); }
+.bottom-nav a { min-width:0; }
+.map-page-intro { max-width:900px; }
+.mindmap-workspace { display:grid; grid-template-columns:minmax(250px,320px) minmax(0,1fr); gap:18px; min-height:calc(100vh - 250px); }
+.mindmap-workspace .mindmap-input-panel { padding:20px; border:1px solid var(--border); border-radius:24px; background:#fff; }
+.tool-hint { font-size:.82rem; color:var(--muted); }
+.mindmap-stage-wrap { min-width:0; display:flex; flex-direction:column; gap:10px; }
+.mindmap-toolbar { display:flex; gap:8px; align-items:center; justify-content:flex-end; flex-wrap:wrap; }
+.mindmap-toolbar button { min-height:40px; padding:0 14px; border:1px solid var(--border); border-radius:14px; background:#fff; color:var(--garnet); font-weight:750; }
+.mindmap-toolbar .danger-mini { color:#9b2440; }
+.mindmap-canvas { flex:1; min-height:620px; background:radial-gradient(circle at 50% 45%,#fff 0 25%,#fff7f9 58%,#f8eef2 100%); overflow:hidden; }
+.mindmap-scene { position:absolute; inset:0; transform-origin:center; transition:transform .2s ease; }
+.mind-node { transition:box-shadow .18s ease, transform .18s ease, border-color .18s ease; animation:nodeBloom .35s both cubic-bezier(.2,.8,.2,1); }
+.mind-node:hover,.mind-node.selected { box-shadow:0 14px 36px rgba(105,15,39,.16); border-color:rgba(167,15,53,.48); transform:translateY(-2px); }
+.mind-node[dir="rtl"] { font-family:Tahoma,Arial,sans-serif; font-size:.9rem; }
+@keyframes nodeBloom { from{opacity:0;scale:.9} to{opacity:1;scale:1} }
+.french-dashboard { display:grid; gap:20px; }
+.french-levels { display:flex; gap:10px; overflow:auto; padding-bottom:4px; }
+.french-skill-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.french-skill-grid button { text-align:left; min-height:110px; padding:20px; border:1px solid var(--border); border-radius:22px; background:#fff; color:var(--text); transition:.2s ease; }
+.french-skill-grid button:hover,.french-skill-grid button.active { transform:translateY(-2px); border-color:rgba(167,15,53,.35); box-shadow:0 14px 32px rgba(80,20,35,.07); }
+.french-skill-grid strong,.french-skill-grid small { display:block; }.french-skill-grid strong{font-size:1.08rem;margin-bottom:8px}.french-skill-grid small{color:var(--muted)}
+.exercise-card { display:grid; gap:16px; padding:clamp(20px,3vw,34px); border:1px solid rgba(167,15,53,.16); border-radius:28px; background:linear-gradient(145deg,#fff,#fff9fa); }
+.exercise-card h2 { margin:6px 0 10px; font:500 clamp(1.7rem,3vw,2.6rem) Georgia,serif; }.exercise-card p{line-height:1.6}.exercise-card textarea{width:100%;padding:16px;border:1px solid var(--border);border-radius:16px;font:inherit;resize:vertical}.exercise-actions{display:flex;gap:10px;flex-wrap:wrap}.exercise-actions button{width:auto;margin:0}.exercise-feedback{min-height:26px;padding:0 2px;color:var(--muted);font-weight:650}
+.world-french .world-glyph { font-size:.75rem; }
+@media(max-width:900px){.mindmap-workspace{grid-template-columns:1fr}.mindmap-canvas{min-height:560px}.french-skill-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.french-skill-grid{grid-template-columns:1fr}.mindmap-canvas{min-height:480px}}

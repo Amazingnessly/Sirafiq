@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=5">
+  <link rel="stylesheet" href="./styles.css?v=6">
   <title>Sirāfiq</title>
 </head>
 <body>
@@ -71,7 +71,8 @@
               <button class="world-card world-arabic" type="button" data-focus="vocab"><span class="world-glyph">ع</span><span><strong>Vocabulaire arabe</strong><small>Rappel, sens et consolidation</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-pronounce" type="button" data-go="prononcer"><span class="world-glyph">P</span><span><strong>Prononcer</strong><small>Articulation, prosodie et aisance</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-write" type="button" data-go="ecrire"><span class="world-glyph">É</span><span><strong>Écrire</strong><small>Geste, régularité puis fluidité</small></span><span class="world-arrow">↗</span></button>
-              <button class="world-card world-map" type="button" data-focus="mindmap"><span class="world-glyph">⌘</span><span><strong>Cartes mentales</strong><small>Transformer un texte en structure visuelle</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-french" type="button" data-go="francais"><span class="world-glyph">Fr</span><span><strong>Français</strong><small>Lecture, langue et expression</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-map" type="button" data-go="cartes"><span class="world-glyph">⌘</span><span><strong>Cartes mentales</strong><small>Transformer un texte en structure visuelle</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-library" type="button" data-go="memoriser"><span class="world-glyph">▤</span><span><strong>Bibliothèque</strong><small>Retrouver vos supports locaux</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-progress" type="button" data-go="progres"><span class="world-glyph">↗</span><span><strong>Progrès</strong><small>Voir ce qui se consolide vraiment</small></span><span class="world-arrow">↗</span></button>
             </div>
@@ -106,16 +107,6 @@
   <section class="memory-pathways" aria-label="Parcours de mémorisation">
     <article class="pathway-card" id="quranHub"><div class="pathway-icon">ق</div><div><p class="section-kicker">Qurʾān</p><h2>Mémorisation dédiée</h2><p>Importez votre support dans la catégorie Qurʾān. Le texte source reste inchangé et sert de référence à vos révisions.</p><button class="secondary-button pathway-action" type="button" data-preset-category="Qour’ān">Afficher mes supports Qurʾān</button></div></article>
     <article class="pathway-card" id="vocabHub"><div class="pathway-icon">ع</div><div><p class="section-kicker">Arabe</p><h2>Vocabulaire actif</h2><p>Regroupez vos listes de mots, puis travaillez-les par rappel du sens, production et révision espacée.</p><button class="secondary-button pathway-action" type="button" data-preset-category="Arabe">Afficher mes supports arabes</button></div></article>
-    <article class="pathway-card mindmap-path" id="mindmapHub"><div class="pathway-icon">⌘</div><div><p class="section-kicker">Carte mentale</p><h2>Structurer un texte visuellement</h2><p>Collez un extrait : Sirāfiq crée une première structure locale que vous pouvez déplacer et réorganiser.</p></div></article>
-  </section>
-
-  <section class="mindmap-studio" aria-labelledby="mindmapTitle">
-    <div class="mindmap-input-panel">
-      <div><p class="section-kicker">Outil local</p><h2 id="mindmapTitle">Créer une carte mentale</h2><p>La génération reste déterministe : elle utilise uniquement le texte que vous fournissez.</p></div>
-      <textarea id="mindmapSource" rows="7" placeholder="Collez ici un paragraphe, un résumé ou des notes…"></textarea>
-      <div class="mindmap-actions"><button class="primary-button" id="generateMindmap" type="button">Créer la carte</button><button class="secondary-button" id="clearMindmap" type="button">Réinitialiser</button></div>
-    </div>
-    <div class="mindmap-canvas" id="mindmapCanvas" aria-live="polite"><p class="mindmap-placeholder">Votre carte apparaîtra ici. Les nœuds pourront être déplacés au doigt ou au stylet.</p></div>
   </section>
 
   <div class="library-toolbar">
@@ -156,6 +147,30 @@
   <div class="support-grid" id="supportGrid" aria-live="polite"></div>
 </section>
 
+
+<section class="view" id="view-cartes" data-view="cartes" aria-labelledby="mindmapPageTitle" hidden>
+  <div class="page-intro map-page-intro"><p class="eyebrow">Cartes mentales</p><h1 id="mindmapPageTitle">Voir les idées. Les relier. Les retenir.</h1><p>Un atelier plein écran pour transformer vos notes en structure visuelle, puis la remodeler au doigt ou au stylet.</p></div>
+  <section class="mindmap-workspace" aria-labelledby="mindmapTitle">
+    <aside class="mindmap-input-panel">
+      <div><p class="section-kicker">Source</p><h2 id="mindmapTitle">Construire la carte</h2><p>Collez un texte. La carte reste locale et ne complète jamais votre contenu avec des informations externes.</p></div>
+      <textarea id="mindmapSource" rows="9" placeholder="Collez un paragraphe, un résumé ou des notes…"></textarea>
+      <div class="mindmap-actions"><button class="primary-button" id="generateMindmap" type="button">Créer la carte</button><button class="secondary-button" id="addMindNode" type="button">+ Ajouter une idée</button><button class="secondary-button" id="clearMindmap" type="button">Réinitialiser</button></div>
+      <p class="tool-hint">Astuce : touchez deux fois un nœud pour le renommer. Sélectionnez-le pour pouvoir le supprimer.</p>
+    </aside>
+    <div class="mindmap-stage-wrap"><div class="mindmap-toolbar"><button id="mindZoomOut" type="button" aria-label="Dézoomer">−</button><span id="mindZoomLabel">100 %</span><button id="mindZoomIn" type="button" aria-label="Zoomer">+</button><button id="mindCenter" type="button">Recentrer</button><button id="deleteMindNode" class="danger-mini" type="button">Supprimer le nœud</button></div><div class="mindmap-canvas" id="mindmapCanvas" aria-live="polite"><div class="mindmap-scene" id="mindmapScene"><p class="mindmap-placeholder">Votre carte apparaîtra ici. Déplacez les idées librement.</p></div></div></div>
+  </section>
+</section>
+
+<section class="view" id="view-francais" data-view="francais" aria-labelledby="frenchTitle" hidden>
+ <div class="page-intro"><p class="eyebrow">Français</p><h1 id="frenchTitle">Comprendre, dire, écrire, réutiliser.</h1><p>Un parcours progressif qui relie lecture, vocabulaire, orthographe, grammaire, expression et oral.</p></div>
+ <section class="french-dashboard">
+  <div class="french-levels" role="tablist" aria-label="Niveau"><button class="lesson-chip active" data-french-level="fondations">Fondations</button><button class="lesson-chip" data-french-level="consolidation">Consolidation</button><button class="lesson-chip" data-french-level="maitrise">Maîtrise</button></div>
+  <div class="french-skill-grid">
+   <button data-french-skill="lecture"><strong>Lecture</strong><small>Comprendre et reformuler</small></button><button data-french-skill="vocabulaire"><strong>Vocabulaire</strong><small>Comprendre et réutiliser</small></button><button data-french-skill="orthographe"><strong>Orthographe</strong><small>Observer et mémoriser</small></button><button data-french-skill="grammaire"><strong>Grammaire</strong><small>Manipuler la phrase</small></button><button data-french-skill="expression"><strong>Expression</strong><small>Produire et améliorer</small></button><button data-go="prononcer"><strong>Oral</strong><small>Prononcer et s'exprimer</small></button>
+  </div>
+  <article class="exercise-card" id="frenchExercise"><div><p class="section-kicker" id="frenchExerciseMeta">Fondations · Lecture</p><h2 id="frenchExerciseTitle">Lire, puis rappeler l’idée essentielle</h2><p id="frenchExercisePrompt">Lisez : « Chaque matin, Lina ouvre la fenêtre pour observer le ciel avant de partir. » Sans relire, dites ce que fait Lina et quand elle le fait.</p></div><textarea id="frenchAnswer" rows="4" placeholder="Votre réponse…"></textarea><div class="exercise-actions"><button class="primary-button" id="checkFrenchExercise" type="button">Vérifier</button><button class="secondary-button" id="nextFrenchExercise" type="button">Exercice suivant</button></div><div id="frenchFeedback" class="exercise-feedback" aria-live="polite"></div></article>
+ </section>
+</section>
 
 <section class="view" id="view-prononcer" data-view="prononcer" aria-labelledby="pronounceTitle" hidden>
   <div class="page-intro">
@@ -255,6 +270,7 @@
       <a href="#memoriser" data-nav="memoriser"><span aria-hidden="true">◐</span><small>Mémoriser</small></a>
       <a href="#prononcer" data-nav="prononcer"><span aria-hidden="true">◉</span><small>Prononcer</small></a>
       <a href="#ecrire" data-nav="ecrire"><span aria-hidden="true">✎</span><small>Écrire</small></a>
+      <a href="#cartes" data-nav="cartes"><span aria-hidden="true">⌘</span><small>Cartes</small></a>
       <a href="#progres" data-nav="progres"><span aria-hidden="true">↗</span><small>Progrès</small></a>
     </nav>
   </div>
@@ -280,7 +296,7 @@
 
   <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./app.js?v=5"></script>
+  <script type="module" src="./app.js?v=6"></script>
 
 <input id="filePicker"
        type="file"
@@ -372,8 +388,8 @@
 </dialog>
 
   <script type="module" src="./lot1.js?v=5"></script>
-  <script type="module" src="./writing.js?v=5"></script>
-  <script type="module" src="./pronunciation.js?v=5"></script>
-  <script type="module" src="./learning.js?v=5"></script>
+  <script type="module" src="./writing.js?v=6"></script>
+  <script type="module" src="./pronunciation.js?v=6"></script>
+  <script type="module" src="./learning.js?v=6"></script>
 </body>
 </html>

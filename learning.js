@@ -102,20 +102,21 @@ function shortLabel(sentence, max = 42) {
 
 function renderMindmap(text) {
   const canvas = $('mindmapCanvas');
-  if (!canvas) return;
+  const scene = $('mindmapScene') || canvas;
+  if (!canvas || !scene) return;
   const sentences = splitSentences(text);
   if (!sentences.length) {
-    canvas.innerHTML = '<p class="mindmap-placeholder">Ajoutez quelques phrases pour créer une carte.</p>';
+    scene.innerHTML = '<p class="mindmap-placeholder">Ajoutez quelques phrases pour créer une carte.</p>';
     return;
   }
   const root = shortLabel(sentences[0], 34);
   const branches = (sentences.length > 1 ? sentences.slice(1) : sentences).slice(0, 6);
-  canvas.innerHTML = `
+  scene.innerHTML = `
     <svg class="mindmap-lines" aria-hidden="true"></svg>
     <button class="mind-node root-node" type="button" data-node="0">${root}</button>
     ${branches.map((s, i) => `<button class="mind-node branch-node" type="button" data-node="${i + 1}">${shortLabel(s)}</button>`).join('')}
   `;
-  const nodes = [...canvas.querySelectorAll('.mind-node')];
+  const nodes = [...scene.querySelectorAll('.mind-node')];
   const cx = canvas.clientWidth / 2;
   const cy = Math.max(180, canvas.clientHeight / 2);
   nodes.forEach((node, i) => {
@@ -136,15 +137,16 @@ function renderMindmap(text) {
 
 function drawMindmapLines() {
   const canvas = $('mindmapCanvas');
-  const svg = canvas?.querySelector('.mindmap-lines');
-  const root = canvas?.querySelector('.root-node');
+  const scene = $('mindmapScene') || canvas;
+  const svg = scene?.querySelector('.mindmap-lines');
+  const root = scene?.querySelector('.root-node');
   if (!canvas || !svg || !root) return;
   const cr = canvas.getBoundingClientRect();
   const rr = root.getBoundingClientRect();
   const x1 = rr.left - cr.left + rr.width / 2;
   const y1 = rr.top - cr.top + rr.height / 2;
   svg.setAttribute('viewBox', `0 0 ${canvas.clientWidth} ${canvas.clientHeight}`);
-  svg.innerHTML = [...canvas.querySelectorAll('.branch-node')].map(node => {
+  svg.innerHTML = [...scene.querySelectorAll('.branch-node')].map(node => {
     const nr = node.getBoundingClientRect();
     const x2 = nr.left - cr.left + nr.width / 2;
     const y2 = nr.top - cr.top + nr.height / 2;
@@ -179,8 +181,60 @@ function makeDraggable(node, canvas) {
 $('generateMindmap')?.addEventListener('click', () => renderMindmap($('mindmapSource')?.value));
 $('clearMindmap')?.addEventListener('click', () => {
   if ($('mindmapSource')) $('mindmapSource').value = '';
-  if ($('mindmapCanvas')) $('mindmapCanvas').innerHTML = '<p class="mindmap-placeholder">Votre carte apparaîtra ici. Les nœuds pourront être déplacés au doigt ou au stylet.</p>';
+  const scene = $('mindmapScene') || $('mindmapCanvas'); if (scene) scene.innerHTML = '<p class="mindmap-placeholder">Votre carte apparaîtra ici. Les nœuds pourront être déplacés au doigt ou au stylet.</p>';
 });
 window.addEventListener('resize', drawMindmapLines);
 window.addEventListener('sirafiq:data-changed', refreshHomeMetrics);
 refreshHomeMetrics();
+
+// v6 — atelier de cartes mentales + exercices de français
+let mindZoom = 1;
+let selectedMindNode = null;
+const oldRenderMindmap = renderMindmap;
+function selectMindNode(node){ document.querySelectorAll('.mind-node.selected').forEach(n=>n.classList.remove('selected')); selectedMindNode=node; node?.classList.add('selected'); }
+function enhanceMindNodes(){
+  document.querySelectorAll('.mind-node').forEach(node=>{
+    node.setAttribute('dir', /[\u0600-\u06FF]/.test(node.textContent) ? 'rtl' : 'auto');
+    node.addEventListener('click',()=>selectMindNode(node));
+    node.addEventListener('dblclick',()=>{ const next=prompt('Renommer cette idée',node.textContent.trim()); if(next?.trim()){node.textContent=next.trim();node.setAttribute('dir',/[\u0600-\u06FF]/.test(next)?'rtl':'auto');drawMindmapLines();} });
+  });
+}
+$('generateMindmap')?.addEventListener('click',()=>setTimeout(enhanceMindNodes,0));
+$('addMindNode')?.addEventListener('click',()=>{
+ const canvas=$('mindmapCanvas'), scene=$('mindmapScene')||canvas; if(!canvas||!scene)return;
+ if(!scene.querySelector('.mindmap-lines')) scene.insertAdjacentHTML('afterbegin','<svg class="mindmap-lines" aria-hidden="true"></svg>');
+ const node=document.createElement('button'); node.type='button'; node.className='mind-node branch-node'; node.textContent='Nouvelle idée'; node.style.left=`${Math.max(20,canvas.clientWidth/2-85)}px`; node.style.top=`${Math.max(90,canvas.clientHeight/2+90)}px`; scene.appendChild(node); makeDraggable(node,canvas); enhanceMindNodes(); selectMindNode(node); drawMindmapLines();
+});
+$('deleteMindNode')?.addEventListener('click',()=>{ if(selectedMindNode&&!selectedMindNode.classList.contains('root-node')){selectedMindNode.remove();selectedMindNode=null;drawMindmapLines();} });
+function setMindZoom(v){mindZoom=Math.max(.65,Math.min(1.55,v));const scene=$('mindmapScene');if(scene)scene.style.transform=`scale(${mindZoom})`;if($('mindZoomLabel'))$('mindZoomLabel').textContent=`${Math.round(mindZoom*100)} %`;}
+$('mindZoomIn')?.addEventListener('click',()=>setMindZoom(mindZoom+.1)); $('mindZoomOut')?.addEventListener('click',()=>setMindZoom(mindZoom-.1)); $('mindCenter')?.addEventListener('click',()=>setMindZoom(1));
+
+const frenchBank={
+ fondations:{
+  lecture:[['Lire, puis rappeler l’idée essentielle','Lisez : « Chaque matin, Lina ouvre la fenêtre pour observer le ciel avant de partir. » Sans relire, dites ce que fait Lina et quand elle le fait.','Lina ouvre la fenêtre le matin pour observer le ciel avant de partir.']],
+  vocabulaire:[['Choisir le mot précis','Complétez avec un mot précis : « Après plusieurs essais, son geste devient plus ____ et régulier. »','fluide']],
+  orthographe:[['Mémoriser une forme fréquente','Écrivez correctement : « aujourd hui » et « beaucoup ».','aujourd’hui ; beaucoup']],
+  grammaire:[['Repérer qui fait l’action','Dans « Les élèves relisent leur phrase », quel est le sujet et quel est le verbe ?','Sujet : les élèves. Verbe : relisent.']],
+  expression:[['Produire une phrase claire','Écrivez une phrase complète pour expliquer une habitude qui vous aide à apprendre.','Vérifiez : majuscule, idée complète, verbe conjugué et ponctuation.']]
+ },
+ consolidation:{
+  lecture:[['Reformuler sans copier','Reformulez : « La répétition espacée consiste à revenir sur une connaissance après un délai. »','Expliquez la même idée avec vos propres mots, sans changer le sens.']],
+  vocabulaire:[['Nuancer le sens','Donnez un synonyme adapté de « améliorer » dans : « améliorer un texte ».','corriger, enrichir, perfectionner selon le contexte']],
+  orthographe:[['Accorder dans le groupe nominal','Corrigez : « des phrase claire et précise ».','des phrases claires et précises']],
+  grammaire:[['Manipuler la phrase','Transformez « Il relit son texte. » à la forme négative.','Il ne relit pas son texte.']],
+  expression:[['Justifier une idée','En 2 ou 3 phrases, expliquez pourquoi se tester peut être plus utile que relire passivement.','Une réponse réussie formule une idée, donne une raison et reste concise.']]
+ },
+ maitrise:{
+  lecture:[['Distinguer idée et preuve','Écrivez une idée principale puis un élément qui pourrait la justifier dans un texte argumentatif sur les révisions.','Séparez clairement l’affirmation de l’élément qui la soutient.']],
+  vocabulaire:[['Précision lexicale','Remplacez « faire » par un verbe plus précis : « faire une analyse », « faire un résumé ».','mener/réaliser une analyse ; rédiger/produire un résumé']],
+  orthographe:[['Réviser une phrase','Corrigez : « Les notions qu’il a réviser sont rester fragiles. »','Les notions qu’il a révisées sont restées fragiles.']],
+  grammaire:[['Analyser une relation','Dans « Lorsque la séance se termine, je note ce qui reste fragile », identifiez la proposition subordonnée.','Lorsque la séance se termine.']],
+  expression:[['Synthèse courte','Rédigez 4 phrases : thèse, argument, exemple, conclusion sur une méthode de révision.','Vérifiez la progression logique et les connecteurs.']]
+ }};
+let frenchLevel='fondations', frenchSkill='lecture', frenchIndex=0;
+function renderFrenchExercise(){const arr=frenchBank[frenchLevel]?.[frenchSkill]||[];const ex=arr[frenchIndex%arr.length];if(!ex)return;$('frenchExerciseMeta').textContent=`${frenchLevel[0].toUpperCase()+frenchLevel.slice(1)} · ${frenchSkill[0].toUpperCase()+frenchSkill.slice(1)}`;$('frenchExerciseTitle').textContent=ex[0];$('frenchExercisePrompt').textContent=ex[1];$('frenchAnswer').value='';$('frenchFeedback').textContent='';}
+document.querySelectorAll('[data-french-level]').forEach(b=>b.addEventListener('click',()=>{frenchLevel=b.dataset.frenchLevel;document.querySelectorAll('[data-french-level]').forEach(x=>x.classList.toggle('active',x===b));frenchIndex=0;renderFrenchExercise();}));
+document.querySelectorAll('[data-french-skill]').forEach(b=>b.addEventListener('click',()=>{frenchSkill=b.dataset.frenchSkill;document.querySelectorAll('[data-french-skill]').forEach(x=>x.classList.toggle('active',x===b));frenchIndex=0;renderFrenchExercise();}));
+$('checkFrenchExercise')?.addEventListener('click',()=>{const ex=frenchBank[frenchLevel][frenchSkill][frenchIndex%frenchBank[frenchLevel][frenchSkill].length];$('frenchFeedback').innerHTML=`<strong>Repère de correction :</strong> ${ex[2]}`;});
+$('nextFrenchExercise')?.addEventListener('click',()=>{frenchIndex++;renderFrenchExercise();});
+renderFrenchExercise();
