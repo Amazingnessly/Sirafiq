@@ -1,4 +1,4 @@
-import { addRecording, listRecordings, getRecording, deleteRecording } from './db.js?v=4';
+import { addRecording, listRecordings, getRecording, deleteRecording } from './db.js?v=5';
 const $=id=>document.getElementById(id);
 const startButton=$('recordStart'), pauseButton=$('recordPause'), stopButton=$('recordStop'), saveButton=$('recordSave'), discardButton=$('recordDiscard'), titleInput=$('recordTitle'), timer=$('recordTimer'), status=$('recordStatus'), preview=$('recordPreview'), library=$('recordingLibrary');
 let stream=null, recorder=null, chunks=[], currentBlob=null, currentUrl=null, startedAt=0, pausedAt=0, pausedTotal=0, timerId=0, currentDurationMs=0, libraryUrls=[];

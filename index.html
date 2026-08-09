@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=4">
+  <link rel="stylesheet" href="./styles.css?v=5">
   <title>Sirāfiq</title>
 </head>
 <body>
@@ -33,79 +33,59 @@
 
     <main id="mainContent" tabindex="-1">
       <section class="view active" id="view-accueil" data-view="accueil" aria-labelledby="homeTitle">
-        <div class="hero">
-          <p class="eyebrow">Votre compagnon d’apprentissage</p>
-          <h1 id="homeTitle">Avancer avec clarté.</h1>
-          <p class="hero-copy">Sirāfiq conserve vos supports, vos enregistrements et vos tracés localement sur cet appareil. Le diagnostic vérifie les fonctions nécessaires au fonctionnement de l’application.</p>
+        <div class="home-dashboard">
+          <section class="home-hero">
+            <div>
+              <p class="eyebrow">Votre séance, sans surcharge</p>
+              <h1 id="homeTitle">Réviser avec envie.<br><span>Progresser avec méthode.</span></h1>
+              <p>Sirāfiq transforme vos supports en actions concrètes : rappeler, prononcer, écrire, relier les idées et revenir au bon moment.</p>
+            </div>
+            <div class="home-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+          </section>
+
+          <section class="today-card" aria-labelledby="todayTitle">
+            <div class="today-topline">
+              <div>
+                <p class="section-kicker">Aujourd’hui</p>
+                <h2 id="todayTitle">Votre prochaine petite victoire</h2>
+              </div>
+              <span class="ready-chip">Appareil prêt ✓</span>
+            </div>
+            <p class="today-lead" id="todayLead">Une session courte, centrée sur le rappel actif et la pratique.</p>
+            <div class="today-plan" id="todayPlan">
+              <div><strong id="todayMinutes">12</strong><small>minutes</small></div>
+              <div><strong id="todaySupports">0</strong><small>supports</small></div>
+              <div><strong id="todayPractices">0</strong><small>pratiques</small></div>
+            </div>
+            <button class="primary-button today-start" id="startTodaySession" type="button"><span>Commencer ma session</span><span aria-hidden="true">→</span></button>
+          </section>
+
+          <section class="section-block learning-worlds" aria-labelledby="worldsTitle">
+            <div class="section-heading split-heading">
+              <div><p class="section-kicker">Vos espaces</p><h2 id="worldsTitle">Choisir ce que vous voulez renforcer</h2></div>
+              <p class="section-aside">Chaque espace garde une intention claire : apprendre, pratiquer, vérifier.</p>
+            </div>
+            <div class="world-grid">
+              <button class="world-card world-memory" type="button" data-go="memoriser"><span class="world-glyph">M</span><span><strong>Mémoriser</strong><small>Supports, rappel actif et révisions</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-quran" type="button" data-focus="quran"><span class="world-glyph">ق</span><span><strong>Qurʾān</strong><small>Espace dédié à votre support</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-arabic" type="button" data-focus="vocab"><span class="world-glyph">ع</span><span><strong>Vocabulaire arabe</strong><small>Rappel, sens et consolidation</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-pronounce" type="button" data-go="prononcer"><span class="world-glyph">P</span><span><strong>Prononcer</strong><small>Articulation, prosodie et aisance</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-write" type="button" data-go="ecrire"><span class="world-glyph">É</span><span><strong>Écrire</strong><small>Geste, régularité puis fluidité</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-map" type="button" data-focus="mindmap"><span class="world-glyph">⌘</span><span><strong>Cartes mentales</strong><small>Transformer un texte en structure visuelle</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-library" type="button" data-go="memoriser"><span class="world-glyph">▤</span><span><strong>Bibliothèque</strong><small>Retrouver vos supports locaux</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-progress" type="button" data-go="progres"><span class="world-glyph">↗</span><span><strong>Progrès</strong><small>Voir ce qui se consolide vraiment</small></span><span class="world-arrow">↗</span></button>
+            </div>
+          </section>
+
+          <section class="section-block home-momentum" aria-labelledby="momentumTitle">
+            <div class="section-heading"><div><p class="section-kicker">Rythme</p><h2 id="momentumTitle">Construire une mémoire qui tient</h2></div></div>
+            <div class="momentum-grid">
+              <article><span>01</span><strong>Rappeler</strong><p>Essayez d’abord de retrouver l’information sans regarder.</p></article>
+              <article><span>02</span><strong>Vérifier</strong><p>Comparez ensuite avec le support original, sans approximation.</p></article>
+              <article><span>03</span><strong>Revenir</strong><p>Révisez à nouveau après un délai plutôt que tout répéter d’un coup.</p></article>
+            </div>
+          </section>
         </div>
-
-        <section class="session-card" aria-labelledby="sessionTitle">
-          <div class="session-light" aria-hidden="true"></div>
-          <div class="session-head">
-            <div>
-              <p class="section-kicker">Aujourd’hui</p>
-              <h2 id="sessionTitle">Préparer votre environnement</h2>
-            </div>
-            <span class="status-pill status-current">Local</span>
-          </div>
-          <p class="session-copy">Vérifiez en une fois le stockage local, le fonctionnement hors ligne, le microphone et la prise en charge tactile de votre appareil.</p>
-          <div class="progress-line" aria-label="Progression du socle">
-            <span id="setupProgress"></span>
-          </div>
-          <div class="session-meta">
-            <span id="setupProgressText">0 vérification terminée</span>
-            <span>Données locales</span>
-          </div>
-          <button class="primary-button" id="startDiagnostic" type="button">
-            <span>Lancer le diagnostic</span>
-            <span aria-hidden="true">→</span>
-          </button>
-        </section>
-
-        <section class="section-block" aria-labelledby="horizonsTitle">
-          <div class="section-heading">
-            <div>
-              <p class="section-kicker">Les quatre horizons</p>
-              <h2 id="horizonsTitle">Une architecture claire</h2>
-            </div>
-          </div>
-          <div class="horizon-grid">
-            <button class="horizon-card" type="button" data-go="memoriser">
-              <span class="horizon-icon">M</span>
-              <span><strong>Mémoriser</strong><small>Bibliothèque locale de supports</small></span>
-              <span aria-hidden="true">›</span>
-            </button>
-            <button class="horizon-card" type="button" data-go="prononcer">
-              <span class="horizon-icon">P</span>
-              <span><strong>Prononcer</strong><small>Enregistrer et réécouter</small></span>
-              <span aria-hidden="true">›</span>
-            </button>
-            <button class="horizon-card" type="button" data-go="ecrire">
-              <span class="horizon-icon">É</span>
-              <span><strong>Écrire</strong><small>Tracer au doigt ou au stylet</small></span>
-              <span aria-hidden="true">›</span>
-            </button>
-            <button class="horizon-card" type="button" data-go="progres">
-              <span class="horizon-icon">↗</span>
-              <span><strong>Progrès</strong><small>Activité conservée sur cet appareil</small></span>
-              <span aria-hidden="true">›</span>
-            </button>
-          </div>
-        </section>
-
-        <section class="section-block" aria-labelledby="activityTitle">
-          <div class="section-heading">
-            <div>
-              <p class="section-kicker">État réel</p>
-              <h2 id="activityTitle">Ce qui fonctionne maintenant</h2>
-            </div>
-          </div>
-          <div class="truth-list">
-            <div class="truth-item"><span class="truth-dot ready"></span><div><strong>Navigation et interface responsive</strong><p>Les cinq sections sont accessibles sur iPhone et iPad.</p></div></div>
-            <div class="truth-item"><span class="truth-dot ready"></span><div><strong>Stockage local vérifiable</strong><p>Une donnée de test peut être écrite puis relue dans IndexedDB.</p></div></div>
-            <div class="truth-item"><span class="truth-dot ready"></span><div><strong>Supports, audio et écriture</strong><p>Import local, enregistrement microphone et tracé tactile sont disponibles sans compte ni cloud.</p></div></div>
-          </div>
-        </section>
       </section>
 
       
@@ -122,6 +102,21 @@
       <span aria-hidden="true">＋</span>
     </button>
   </div>
+
+  <section class="memory-pathways" aria-label="Parcours de mémorisation">
+    <article class="pathway-card" id="quranHub"><div class="pathway-icon">ق</div><div><p class="section-kicker">Qurʾān</p><h2>Mémorisation dédiée</h2><p>Importez votre support dans la catégorie Qurʾān. Le texte source reste inchangé et sert de référence à vos révisions.</p><button class="secondary-button pathway-action" type="button" data-preset-category="Qour’ān">Afficher mes supports Qurʾān</button></div></article>
+    <article class="pathway-card" id="vocabHub"><div class="pathway-icon">ع</div><div><p class="section-kicker">Arabe</p><h2>Vocabulaire actif</h2><p>Regroupez vos listes de mots, puis travaillez-les par rappel du sens, production et révision espacée.</p><button class="secondary-button pathway-action" type="button" data-preset-category="Arabe">Afficher mes supports arabes</button></div></article>
+    <article class="pathway-card mindmap-path" id="mindmapHub"><div class="pathway-icon">⌘</div><div><p class="section-kicker">Carte mentale</p><h2>Structurer un texte visuellement</h2><p>Collez un extrait : Sirāfiq crée une première structure locale que vous pouvez déplacer et réorganiser.</p></div></article>
+  </section>
+
+  <section class="mindmap-studio" aria-labelledby="mindmapTitle">
+    <div class="mindmap-input-panel">
+      <div><p class="section-kicker">Outil local</p><h2 id="mindmapTitle">Créer une carte mentale</h2><p>La génération reste déterministe : elle utilise uniquement le texte que vous fournissez.</p></div>
+      <textarea id="mindmapSource" rows="7" placeholder="Collez ici un paragraphe, un résumé ou des notes…"></textarea>
+      <div class="mindmap-actions"><button class="primary-button" id="generateMindmap" type="button">Créer la carte</button><button class="secondary-button" id="clearMindmap" type="button">Réinitialiser</button></div>
+    </div>
+    <div class="mindmap-canvas" id="mindmapCanvas" aria-live="polite"><p class="mindmap-placeholder">Votre carte apparaîtra ici. Les nœuds pourront être déplacés au doigt ou au stylet.</p></div>
+  </section>
 
   <div class="library-toolbar">
     <label class="search-field">
@@ -168,6 +163,17 @@
     <h1 id="pronounceTitle">Enregistrer, réécouter, recommencer.</h1>
     <p>Le microphone est utilisé uniquement pendant vos prises. Les enregistrements que vous choisissez de conserver restent dans le stockage local de cet appareil.</p>
   </div>
+  <section class="practice-path" aria-labelledby="pronunciationPathTitle">
+    <div class="practice-path-head"><div><p class="section-kicker">Parcours français</p><h2 id="pronunciationPathTitle">De l’articulation à l’aisance</h2></div><span class="evidence-chip">Articulation · Prosodie · Intelligibilité</span></div>
+    <div class="lesson-strip" id="pronunciationLessons">
+      <button type="button" class="lesson-chip active" data-pron-lesson="sons">1 · Sons</button>
+      <button type="button" class="lesson-chip" data-pron-lesson="contrastes">2 · Contrastes</button>
+      <button type="button" class="lesson-chip" data-pron-lesson="rythme">3 · Rythme</button>
+      <button type="button" class="lesson-chip" data-pron-lesson="liaisons">4 · Enchaînements</button>
+      <button type="button" class="lesson-chip" data-pron-lesson="expression">5 · Expression</button>
+    </div>
+    <div class="practice-prompt-card"><div class="prompt-pulse" aria-hidden="true"></div><div><small>À prononcer</small><strong id="pronunciationPrompt">Tu — tout — rue — roue</strong><p id="pronunciationTip">Distinguez /y/ et /u/. Cherchez d’abord une différence nette et intelligible, sans accélérer.</p></div></div>
+  </section>
   <section class="recorder-card" aria-labelledby="recorderTitle">
     <div class="recorder-head"><div><p class="section-kicker">Enregistreur local</p><h2 id="recorderTitle">Nouvelle prise</h2></div><strong class="record-timer" id="recordTimer">00:00</strong></div>
     <label class="record-title-field"><span>Titre</span><input id="recordTitle" type="text" maxlength="160" placeholder="Ex. Lecture du passage 1"></label>
@@ -194,6 +200,19 @@
     <h1 id="writeTitle">Écrire au doigt ou au stylet.</h1>
     <p>Tracez librement sur la surface ci-dessous. Les traits restent uniquement sur cet appareil.</p>
   </div>
+
+  <section class="practice-path writing-path" aria-labelledby="writingPathTitle">
+    <div class="practice-path-head"><div><p class="section-kicker">Parcours français</p><h2 id="writingPathTitle">Du geste maîtrisé à l’écriture fluide</h2></div><span class="evidence-chip">Forme · Liaison · Régularité · Fluidité</span></div>
+    <div class="lesson-strip" id="writingLessons">
+      <button type="button" class="lesson-chip active" data-writing-lesson="gestes">1 · Gestes</button>
+      <button type="button" class="lesson-chip" data-writing-lesson="lettres">2 · Lettres</button>
+      <button type="button" class="lesson-chip" data-writing-lesson="liaisons">3 · Liaisons</button>
+      <button type="button" class="lesson-chip" data-writing-lesson="mots">4 · Mots</button>
+      <button type="button" class="lesson-chip" data-writing-lesson="phrases">5 · Phrases</button>
+      <button type="button" class="lesson-chip" data-writing-lesson="fluidite">6 · Fluidité</button>
+    </div>
+    <div class="writing-guide"><div><small>Exercice guidé</small><strong id="writingPracticePrompt">Boucles régulières : 𝓁 𝓁 𝓁</strong><p id="writingPracticeTip">Gardez une hauteur stable et un mouvement continu. Cherchez la régularité avant la vitesse.</p></div><div class="guide-rhythm" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+  </section>
 
   <div class="writing-toolbar">
     <button class="secondary-button" id="clearWriting" type="button">Effacer</button>
@@ -261,7 +280,7 @@
 
   <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./app.js?v=4"></script>
+  <script type="module" src="./app.js?v=5"></script>
 
 <input id="filePicker"
        type="file"
@@ -352,8 +371,9 @@
   <div class="support-viewer-body" id="supportViewerBody"></div>
 </dialog>
 
-  <script type="module" src="./lot1.js?v=4"></script>
-  <script type="module" src="./writing.js?v=4"></script>
-  <script type="module" src="./pronunciation.js?v=4"></script>
+  <script type="module" src="./lot1.js?v=5"></script>
+  <script type="module" src="./writing.js?v=5"></script>
+  <script type="module" src="./pronunciation.js?v=5"></script>
+  <script type="module" src="./learning.js?v=5"></script>
 </body>
 </html>

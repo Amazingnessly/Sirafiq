@@ -1,7 +1,7 @@
 import {
   addDiagnostic, clearDiagnostics, listDiagnostics, testIndexedDbAvailability, writeLocalProbe,
   countSupports, countRecordings, countWritings
-} from './db.js?v=4';
+} from './db.js?v=5';
 
 const views = [...document.querySelectorAll('[data-view]')];
 const navItems = [...document.querySelectorAll('[data-nav]')];
@@ -106,8 +106,8 @@ async function runDiagnostics() {
   }
 
   const percentage = Math.round((passed / diagnosticDefinitions.length) * 100);
-  progressBar.style.width = `${percentage}%`;
-  progressText.textContent = `${passed} vérification${passed > 1 ? 's' : ''} réussie${passed > 1 ? 's' : ''} sur ${diagnosticDefinitions.length}`;
+  if (progressBar) progressBar.style.width = `${percentage}%`;
+  if (progressText) progressText.textContent = `${passed} vérification${passed > 1 ? 's' : ''} réussie${passed > 1 ? 's' : ''} sur ${diagnosticDefinitions.length}`;
   diagnosticNote.textContent = failed ? `${failed} fonction essentielle est indisponible. Consultez les lignes rouges.` : warnings ? `Socle utilisable avec ${warnings} point${warnings > 1 ? 's' : ''} à confirmer sur l’appareil.` : 'Toutes les vérifications du socle ont réussi.';
   await refreshProgress();
 }
@@ -142,12 +142,12 @@ async function refreshProgress() {
     if (records.length) {
       const last = records.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
       if (lastDiagnostic) lastDiagnostic.textContent = new Date(last.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
-      progressBar.style.width = `${Math.round((last.passed / diagnosticDefinitions.length) * 100)}%`;
-      progressText.textContent = `${last.passed} vérification${last.passed > 1 ? 's' : ''} réussie${last.passed > 1 ? 's' : ''} sur ${diagnosticDefinitions.length}`;
+      if (progressBar) progressBar.style.width = `${Math.round((last.passed / diagnosticDefinitions.length) * 100)}%`;
+      if (progressText) progressText.textContent = `${last.passed} vérification${last.passed > 1 ? 's' : ''} réussie${last.passed > 1 ? 's' : ''} sur ${diagnosticDefinitions.length}`;
     } else {
       if (lastDiagnostic) lastDiagnostic.textContent = '—';
-      progressBar.style.width = '0%';
-      progressText.textContent = '0 vérification terminée';
+      if (progressBar) progressBar.style.width = '0%';
+      if (progressText) progressText.textContent = '0 vérification terminée';
     }
   } catch (error) {
     console.warn('Progression locale indisponible', error);
@@ -171,7 +171,7 @@ function closeDialog() {
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   try {
-    await navigator.serviceWorker.register('./sw.js?v=4', { scope: './', updateViaCache: 'none' });
+    await navigator.serviceWorker.register('./sw.js?v=5', { scope: './', updateViaCache: 'none' });
   } catch (error) {
     console.warn('Service worker non enregistré', error);
   }
@@ -181,8 +181,8 @@ window.addEventListener('hashchange', renderRoute);
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
 window.addEventListener('sirafiq:data-changed', refreshProgress);
-document.getElementById('openDiagnostics').addEventListener('click', openDialog);
-document.getElementById('startDiagnostic').addEventListener('click', () => { openDialog(); runDiagnostics(); });
+document.getElementById('openDiagnostics')?.addEventListener('click', openDialog);
+document.getElementById('startDiagnostic')?.addEventListener('click', () => { openDialog(); runDiagnostics(); });
 document.querySelectorAll('[data-open-diagnostic]').forEach(button => button.addEventListener('click', openDialog));
 document.getElementById('closeDiagnostics').addEventListener('click', closeDialog);
 document.getElementById('runDiagnostic').addEventListener('click', runDiagnostics);

@@ -1,4 +1,4 @@
-import { addWriting, listWritings, deleteWriting } from './db.js?v=4';
+import { addWriting, listWritings, deleteWriting } from './db.js?v=5';
 
 const canvas = document.getElementById('writingCanvas');
 const clearButton = document.getElementById('clearWriting');
