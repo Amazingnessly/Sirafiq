@@ -1,4 +1,4 @@
-import { addWriting, listWritings, deleteWriting } from './db.js?v=3';
+import { addWriting, listWritings, deleteWriting } from './db.js?v=4';
 
 const canvas = document.getElementById('writingCanvas');
 const clearButton = document.getElementById('clearWriting');
@@ -54,7 +54,7 @@ async function saveWriting() {
 async function refreshGallery() {
   if (!gallery) return; galleryUrls.forEach(URL.revokeObjectURL); galleryUrls=[];
   try { const items=(await listWritings()).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)); if(!items.length){gallery.innerHTML='<p class="empty-inline">Aucun tracé enregistré.</p>';return;}
-    gallery.innerHTML=items.map(item=>{ const url=URL.createObjectURL(item.blob); galleryUrls.push(url); const date=new Date(item.createdAt).toLocaleString('fr-FR'); return `<article class="writing-card"><img src="${url}" alt="Tracé enregistré le ${date}"><div><strong>${date}</strong><button type="button" class="danger-link" data-delete-writing="${item.id}">Supprimer</button></div></article>`; }).join('');
+    gallery.innerHTML=items.map(item=>{ const url=URL.createObjectURL(item.blob); galleryUrls.push(url); const date=new Date(item.createdAt).toLocaleString('fr-FR'); return `<article class="writing-card"><img src="${url}" alt="Tracé enregistré le ${date}"><div><strong>${date}</strong><button type="button" class="danger-link" data-delete-writing="${item.id}">🗑 Supprimer</button></div></article>`; }).join('');
   } catch(error){ console.error(error); gallery.innerHTML='<p class="empty-inline">Impossible de lire les tracés locaux.</p>'; }
 }
 async function removeWriting(id){ if(!confirm('Supprimer définitivement ce tracé de cet appareil ?'))return; await deleteWriting(id); window.dispatchEvent(new CustomEvent('sirafiq:data-changed')); await refreshGallery(); }

@@ -3,7 +3,7 @@ import {
   listSupports,
   getSupport,
   deleteSupport
-} from './db.js?v=3';
+} from './db.js?v=4';
 
 const $ = id => document.getElementById(id);
 
@@ -26,6 +26,10 @@ const supportViewerDialog = $('supportViewerDialog');
 const supportViewerBody = $('supportViewerBody');
 const supportViewerTitle = $('supportViewerTitle');
 let viewerUrl = null;
+let pdfDoc = null;
+let pdfPageNumber = 1;
+let pdfScale = 1.15;
+let pdfRenderTask = null;
 
 let queue = [];
 let selectedIndex = 0;
@@ -372,6 +376,108 @@ async function refreshLibrary() {
   }
 }
 
+async function renderPdfPage() {
+  const canvas = document.getElementById('pdfCanvas');
+  const counter = document.getElementById('pdfPageCounter');
+  const prev = document.getElementById('pdfPrev');
+  const next = document.getElementById('pdfNext');
+  const zoomLabel = document.getElementById('pdfZoomLabel');
+  if (!pdfDoc || !canvas) return;
+
+  if (pdfRenderTask) {
+    try { pdfRenderTask.cancel(); } catch {}
+    pdfRenderTask = null;
+  }
+
+  const page = await pdfDoc.getPage(pdfPageNumber);
+  const viewport = page.getViewport({ scale: pdfScale });
+  const ratio = Math.max(1, window.devicePixelRatio || 1);
+  const ctx = canvas.getContext('2d', { alpha: false });
+  canvas.width = Math.floor(viewport.width * ratio);
+  canvas.height = Math.floor(viewport.height * ratio);
+  canvas.style.width = `${Math.floor(viewport.width)}px`;
+  canvas.style.height = `${Math.floor(viewport.height)}px`;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, viewport.width, viewport.height);
+
+  pdfRenderTask = page.render({ canvasContext: ctx, viewport });
+  try { await pdfRenderTask.promise; } catch (error) {
+    if (error?.name !== 'RenderingCancelledException') throw error;
+  } finally { pdfRenderTask = null; }
+
+  if (counter) counter.textContent = `Page ${pdfPageNumber} / ${pdfDoc.numPages}`;
+  if (prev) prev.disabled = pdfPageNumber <= 1;
+  if (next) next.disabled = pdfPageNumber >= pdfDoc.numPages;
+  if (zoomLabel) zoomLabel.textContent = `${Math.round(pdfScale * 100)} %`;
+}
+
+async function openPdfSupport(support) {
+  supportViewerBody.innerHTML = `
+    <div class="pdf-reader" aria-label="Lecteur PDF multipage">
+      <div class="pdf-toolbar">
+        <button type="button" class="secondary-button pdf-control" id="pdfPrev">← Page précédente</button>
+        <strong id="pdfPageCounter">Chargement…</strong>
+        <button type="button" class="secondary-button pdf-control" id="pdfNext">Page suivante →</button>
+        <span class="pdf-toolbar-spacer"></span>
+        <button type="button" class="secondary-button pdf-control" id="pdfZoomOut" aria-label="Dézoomer">−</button>
+        <span id="pdfZoomLabel">115 %</span>
+        <button type="button" class="secondary-button pdf-control" id="pdfZoomIn" aria-label="Zoomer">+</button>
+        <a class="secondary-button pdf-control" id="pdfOpenNative" href="#" target="_blank" rel="noopener">Plein écran</a>
+      </div>
+      <div class="pdf-stage"><canvas id="pdfCanvas"></canvas></div>
+      <p class="pdf-hint">Glissez horizontalement ou utilisez les boutons pour changer de page. Le bouton « Plein écran » ouvre aussi le lecteur PDF de Safari.</p>
+    </div>`;
+
+  const openNative = document.getElementById('pdfOpenNative');
+  if (openNative) openNative.href = viewerUrl;
+
+  const lib = window.pdfjsLib;
+  if (!lib?.getDocument) {
+    supportViewerBody.innerHTML = `
+      <div class="pdf-fallback">
+        <p>Le lecteur multipage n’a pas pu être chargé. Ouvrez le PDF dans le lecteur Safari pour parcourir toutes les pages.</p>
+        <a class="primary-button" href="${viewerUrl}" target="_blank" rel="noopener">Ouvrir le PDF en plein écran</a>
+      </div>`;
+    return;
+  }
+
+  lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const data = await support.blob.arrayBuffer();
+  pdfDoc = await lib.getDocument({ data }).promise;
+  pdfPageNumber = 1;
+  pdfScale = 1.15;
+
+  document.getElementById('pdfPrev')?.addEventListener('click', async () => {
+    if (pdfPageNumber > 1) { pdfPageNumber -= 1; await renderPdfPage(); }
+  });
+  document.getElementById('pdfNext')?.addEventListener('click', async () => {
+    if (pdfPageNumber < pdfDoc.numPages) { pdfPageNumber += 1; await renderPdfPage(); }
+  });
+  document.getElementById('pdfZoomOut')?.addEventListener('click', async () => {
+    pdfScale = Math.max(.65, +(pdfScale - .15).toFixed(2)); await renderPdfPage();
+  });
+  document.getElementById('pdfZoomIn')?.addEventListener('click', async () => {
+    pdfScale = Math.min(2.4, +(pdfScale + .15).toFixed(2)); await renderPdfPage();
+  });
+
+  let touchStartX = null;
+  const stage = supportViewerBody.querySelector('.pdf-stage');
+  stage?.addEventListener('touchstart', event => { touchStartX = event.touches[0]?.clientX ?? null; }, { passive: true });
+  stage?.addEventListener('touchend', async event => {
+    if (touchStartX == null) return;
+    const endX = event.changedTouches[0]?.clientX ?? touchStartX;
+    const delta = endX - touchStartX;
+    touchStartX = null;
+    if (Math.abs(delta) < 55) return;
+    if (delta < 0 && pdfPageNumber < pdfDoc.numPages) pdfPageNumber += 1;
+    if (delta > 0 && pdfPageNumber > 1) pdfPageNumber -= 1;
+    await renderPdfPage();
+  }, { passive: true });
+
+  await renderPdfPage();
+}
+
 async function openStoredSupport(id) {
   const support = await getSupport(id);
   if (!support?.blob || !supportViewerBody) return;
@@ -384,7 +490,7 @@ async function openStoredSupport(id) {
   } else if (kind === 'audio') {
     supportViewerBody.innerHTML = `<audio class="support-viewer-audio" controls preload="metadata" src="${viewerUrl}"></audio>`;
   } else if (kind === 'pdf') {
-    supportViewerBody.innerHTML = `<iframe class="support-viewer-frame" src="${viewerUrl}" title="${esc(support.title || 'PDF')}"></iframe>`;
+    await openPdfSupport(support);
   } else if (kind === 'text') {
     const text = await support.blob.text();
     supportViewerBody.innerHTML = `<pre class="support-viewer-text">${esc(text)}</pre>`;
@@ -396,6 +502,9 @@ async function openStoredSupport(id) {
 }
 
 function closeSupportViewer() {
+  if (pdfRenderTask) { try { pdfRenderTask.cancel(); } catch {} pdfRenderTask = null; }
+  if (pdfDoc) { try { pdfDoc.destroy(); } catch {} pdfDoc = null; }
+  pdfPageNumber = 1; pdfScale = 1.15;
   if (typeof supportViewerDialog?.close === 'function') supportViewerDialog.close();
   else supportViewerDialog?.removeAttribute('open');
   if (supportViewerBody) supportViewerBody.innerHTML = '';
