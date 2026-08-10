@@ -1,4 +1,4 @@
-import { addWriting, listWritings, deleteWriting } from './db.js?v=7';
+import { addWriting, listWritings, deleteWriting } from './db.js?v=71';
 
 const $ = id => document.getElementById(id);
 const canvas = $('writingCanvas');

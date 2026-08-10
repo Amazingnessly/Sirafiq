@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=7">
+  <link rel="stylesheet" href="./styles.css?v=71">
   <title>Sirāfiq</title>
 </head>
 <body>
@@ -257,20 +257,44 @@
 
 
       <section class="view" id="view-progres" data-view="progres" aria-labelledby="progressTitle" hidden>
-  <div class="page-intro">
+  <div class="page-intro progress-intro">
     <p class="eyebrow">Progrès</p>
-    <h1 id="progressTitle">Votre activité locale en un coup d’œil.</h1>
-    <p>Cette vue compte uniquement ce qui est réellement conservé sur cet appareil. Aucun compte ni cloud n’est utilisé.</p>
+    <h1 id="progressTitle">Voir ce qui se consolide.</h1>
+    <p>Sirāfiq met d’abord en avant vos révisions, les notions fragiles et les acquis qui demandent simplement à être entretenus.</p>
   </div>
-  <div class="metric-grid progress-metrics">
-    <article class="metric-card"><span>Supports</span><strong id="supportCountMetric">0</strong><small>dans Mémoriser</small></article>
-    <article class="metric-card"><span>Enregistrements</span><strong id="recordingCountMetric">0</strong><small>dans Prononcer</small></article>
-    <article class="metric-card"><span>Tracés</span><strong id="writingCountMetric">0</strong><small>dans Écrire</small></article>
-    <article class="metric-card"><span>Diagnostics</span><strong id="diagnosticCount">0</strong><small>sur cet appareil</small></article>
-    <article class="metric-card"><span>Dernier contrôle</span><strong id="lastDiagnostic">—</strong><small>stocké localement</small></article>
-    <article class="metric-card"><span>Mode réseau</span><strong id="networkMetric">—</strong><small>état actuel</small></article>
-  </div>
-  <button class="secondary-button" id="clearHistory" type="button">Effacer l’historique de diagnostic</button>
+
+  <section class="progress-learning" aria-labelledby="learningProgressTitle">
+    <div class="section-heading progress-heading"><div><p class="section-kicker">Maîtrise</p><h2 id="learningProgressTitle">Votre mémoire en mouvement</h2></div><p class="section-aside">Les états évoluent à partir de vos auto-évaluations et des prochaines dates de révision.</p></div>
+    <div class="mastery-metrics">
+      <article class="mastery-metric urgent"><span>À revoir</span><strong id="reviewDueMetric">0</strong><small>à échéance maintenant</small></article>
+      <article class="mastery-metric fragile"><span>Fragile</span><strong id="reviewFragileMetric">0</strong><small>à renforcer bientôt</small></article>
+      <article class="mastery-metric acquired"><span>Acquis</span><strong id="reviewAcquiredMetric">0</strong><small>en consolidation</small></article>
+      <article class="mastery-metric solid"><span>Solide</span><strong id="reviewSolidMetric">0</strong><small>à entretenir</small></article>
+    </div>
+    <div class="review-queue-card">
+      <div class="review-queue-head"><div><p class="section-kicker">Prochaines révisions</p><h2>Ce qui mérite votre attention</h2></div><button class="secondary-button compact-progress-action" type="button" data-go="francais">Faire un exercice</button></div>
+      <div class="review-queue" id="reviewQueue"><p class="review-empty">Aucune révision planifiée pour l’instant. Commencez par quelques exercices de français.</p></div>
+    </div>
+  </section>
+
+  <section class="section-block local-activity" aria-labelledby="localActivityTitle">
+    <div class="section-heading progress-heading"><div><p class="section-kicker">Activité locale</p><h2 id="localActivityTitle">Ce que vous avez créé sur cet appareil</h2></div></div>
+    <div class="metric-grid progress-metrics activity-metrics">
+      <article class="metric-card"><span>Supports</span><strong id="supportCountMetric">0</strong><small>documents conservés</small></article>
+      <article class="metric-card"><span>Enregistrements</span><strong id="recordingCountMetric">0</strong><small>prises conservées</small></article>
+      <article class="metric-card"><span>Tracés</span><strong id="writingCountMetric">0</strong><small>productions enregistrées</small></article>
+    </div>
+  </section>
+
+  <details class="technical-details">
+    <summary>État technique de l’appareil</summary>
+    <div class="technical-grid">
+      <article><span>Diagnostics</span><strong id="diagnosticCount">0</strong></article>
+      <article><span>Dernier contrôle</span><strong id="lastDiagnostic">—</strong></article>
+      <article><span>Réseau</span><strong id="networkMetric">—</strong></article>
+    </div>
+    <button class="secondary-button compact-progress-action" id="clearHistory" type="button">Effacer l’historique de diagnostic</button>
+  </details>
 </section>
     </main>
 
@@ -305,7 +329,7 @@
 
   <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./app.js?v=7"></script>
+  <script type="module" src="./app.js?v=71"></script>
 
 <input id="filePicker"
        type="file"
@@ -396,9 +420,9 @@
   <div class="support-viewer-body" id="supportViewerBody"></div>
 </dialog>
 
-  <script type="module" src="./lot1.js?v=7"></script>
-  <script type="module" src="./writing.js?v=7"></script>
-  <script type="module" src="./pronunciation.js?v=7"></script>
-  <script type="module" src="./learning.js?v=7"></script>
+  <script type="module" src="./lot1.js?v=71"></script>
+  <script type="module" src="./writing.js?v=71"></script>
+  <script type="module" src="./pronunciation.js?v=71"></script>
+  <script type="module" src="./learning.js?v=71"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { countSupports, countRecordings, countWritings, listReviewItems, upsertReviewItem } from './db.js?v=7';
+import { countSupports, countRecordings, countWritings, listReviewItems, upsertReviewItem } from './db.js?v=71';
 
 const $ = id => document.getElementById(id);
 const prefersReducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -84,6 +84,7 @@ function addNode(label,parentId='',kind='branch',x=null,y=null){
   const scene=mapScene(), canvas=mapCanvas(); if(!scene||!canvas)return null;
   const id=`n${++nodeCounter}`; scene.insertAdjacentHTML('beforeend',nodeHtml(id,cleanIdea(label)||'Nouvelle idée',parentId,kind));
   const node=scene.querySelector(`[data-node-id="${id}"]`); const idx=scene.querySelectorAll('.mind-node').length-1;
+  const parentNode=parentId ? scene.querySelector(`[data-node-id=\"${parentId}\"]`) : null; const depth=kind==='root'?0:(Number(parentNode?.dataset.depth||0)+1); node.dataset.depth=String(depth); if(depth>1) node.classList.add('depth-2');
   node.style.left=`${x ?? (kind==='root'?canvas.clientWidth/2-95:55+(idx%3)*205)}px`; node.style.top=`${y ?? (kind==='root'?canvas.clientHeight/2-38:90+Math.floor(idx/3)*110)}px`;
   makeDraggable(node,canvas); bindNode(node); return node;
 }
@@ -209,4 +210,25 @@ document.querySelectorAll('[data-mastery]').forEach(button=>button.addEventListe
 }));
 renderFrenchExercise();
 
-window.addEventListener('sirafiq:data-changed',refreshHomeMetrics); refreshHomeMetrics();
+
+async function refreshLearningProgress(){
+  try {
+    const reviews = await listReviewItems();
+    const now = Date.now();
+    const due = reviews.filter(r => !r.nextReview || new Date(r.nextReview).getTime() <= now);
+    const fragile = reviews.filter(r => String(r.mastery||'').toLowerCase() === 'fragile' || String(r.mastery||'').toLowerCase() === 'à revoir');
+    const acquired = reviews.filter(r => String(r.mastery||'').toLowerCase() === 'acquis');
+    const solid = reviews.filter(r => String(r.mastery||'').toLowerCase() === 'solide');
+    if($('reviewDueMetric')) $('reviewDueMetric').textContent=due.length;
+    if($('reviewFragileMetric')) $('reviewFragileMetric').textContent=fragile.length;
+    if($('reviewAcquiredMetric')) $('reviewAcquiredMetric').textContent=acquired.length;
+    if($('reviewSolidMetric')) $('reviewSolidMetric').textContent=solid.length;
+    const queue=$('reviewQueue'); if(!queue)return;
+    const ordered=[...reviews].sort((a,b)=>new Date(a.nextReview||0)-new Date(b.nextReview||0)).slice(0,6);
+    if(!ordered.length){ queue.innerHTML='<p class="review-empty">Aucune révision planifiée pour l’instant. Commencez par quelques exercices de français.</p>'; return; }
+    const fmt=d=>{ if(!d)return "Aujourd’hui"; const date=new Date(d); if(date.getTime()<=now)return "Aujourd’hui"; return date.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}); };
+    queue.innerHTML=ordered.map(item=>`<article class="review-item"><span class="review-dot" aria-hidden="true"></span><div><strong>${String(item.title||'Révision').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</strong><small>${item.area ? String(item.area).replace(/^./,c=>c.toUpperCase())+' · ' : ''}${item.mastery||'à revoir'}</small></div><span class="review-date">${fmt(item.nextReview)}</span></article>`).join('');
+  } catch(error){ console.warn('Progression pédagogique indisponible',error); }
+}
+
+window.addEventListener('sirafiq:data-changed',()=>{refreshHomeMetrics();refreshLearningProgress();}); refreshHomeMetrics(); refreshLearningProgress();
