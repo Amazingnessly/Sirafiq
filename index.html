@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=6">
+  <link rel="stylesheet" href="./styles.css?v=7">
   <title>Sirāfiq</title>
 </head>
 <body>
@@ -43,21 +43,22 @@
             <div class="home-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
           </section>
 
-          <section class="today-card" aria-labelledby="todayTitle">
+          <section class="today-card coach-card" aria-labelledby="todayTitle">
             <div class="today-topline">
               <div>
-                <p class="section-kicker">Aujourd’hui</p>
-                <h2 id="todayTitle">Votre prochaine petite victoire</h2>
+                <p class="section-kicker">Programme intelligent local</p>
+                <h2 id="todayTitle">Votre séance est déjà préparée.</h2>
               </div>
               <span class="ready-chip">Appareil prêt ✓</span>
             </div>
-            <p class="today-lead" id="todayLead">Une session courte, centrée sur le rappel actif et la pratique.</p>
+            <p class="today-lead" id="todayLead">Sirāfiq priorise ce qui arrive à échéance, puis ce qui reste fragile.</p>
+            <div class="coach-focus" id="coachFocus"><span class="coach-orb" aria-hidden="true"></span><div><small>À faire maintenant</small><strong id="coachNextTitle">Premier diagnostic d’apprentissage</strong><p id="coachNextReason">Commencez par quelques exercices ; le programme s’adaptera à vos résultats.</p></div></div>
             <div class="today-plan" id="todayPlan">
-              <div><strong id="todayMinutes">12</strong><small>minutes</small></div>
-              <div><strong id="todaySupports">0</strong><small>supports</small></div>
+              <div><strong id="todayMinutes">10</strong><small>minutes</small></div>
+              <div><strong id="todayDue">0</strong><small>à revoir</small></div>
               <div><strong id="todayPractices">0</strong><small>pratiques</small></div>
             </div>
-            <button class="primary-button today-start" id="startTodaySession" type="button"><span>Commencer ma session</span><span aria-hidden="true">→</span></button>
+            <button class="primary-button today-start" id="startTodaySession" type="button"><span>Commencer ma séance</span><span aria-hidden="true">→</span></button>
           </section>
 
           <section class="section-block learning-worlds" aria-labelledby="worldsTitle">
@@ -149,26 +150,33 @@
 
 
 <section class="view" id="view-cartes" data-view="cartes" aria-labelledby="mindmapPageTitle" hidden>
-  <div class="page-intro map-page-intro"><p class="eyebrow">Cartes mentales</p><h1 id="mindmapPageTitle">Voir les idées. Les relier. Les retenir.</h1><p>Un atelier plein écran pour transformer vos notes en structure visuelle, puis la remodeler au doigt ou au stylet.</p></div>
-  <section class="mindmap-workspace" aria-labelledby="mindmapTitle">
+  <div class="page-intro map-page-intro"><p class="eyebrow">Studio de cartes mentales</p><h1 id="mindmapPageTitle">Penser visuellement, sans perdre la source.</h1><p>Choisissez votre méthode : une page blanche totalement libre, ou une première structure créée localement à partir de votre texte.</p></div>
+  <section class="map-mode-switch" aria-label="Mode de création">
+    <button class="map-mode active" type="button" data-map-mode="manual"><span>✦</span><strong>Je la construis</strong><small>Page blanche, idées et sous-idées libres</small></button>
+    <button class="map-mode" type="button" data-map-mode="auto"><span>⌁</span><strong>Créer depuis un texte</strong><small>Sirāfiq propose une structure éditable</small></button>
+  </section>
+  <section class="mindmap-workspace mindmap-workspace-v7" aria-labelledby="mindmapTitle">
     <aside class="mindmap-input-panel">
-      <div><p class="section-kicker">Source</p><h2 id="mindmapTitle">Construire la carte</h2><p>Collez un texte. La carte reste locale et ne complète jamais votre contenu avec des informations externes.</p></div>
-      <textarea id="mindmapSource" rows="9" placeholder="Collez un paragraphe, un résumé ou des notes…"></textarea>
-      <div class="mindmap-actions"><button class="primary-button" id="generateMindmap" type="button">Créer la carte</button><button class="secondary-button" id="addMindNode" type="button">+ Ajouter une idée</button><button class="secondary-button" id="clearMindmap" type="button">Réinitialiser</button></div>
-      <p class="tool-hint">Astuce : touchez deux fois un nœud pour le renommer. Sélectionnez-le pour pouvoir le supprimer.</p>
+      <div><p class="section-kicker">Atelier</p><h2 id="mindmapTitle">Votre matière</h2><p id="mapModeHelp">Commencez par une idée centrale, puis ajoutez des branches et sous-branches.</p></div>
+      <div id="mapAutoPanel" hidden><textarea id="mindmapSource" rows="9" placeholder="Collez un paragraphe, un plan ou vos notes…"></textarea><button class="primary-button" id="generateMindmap" type="button">Générer une première structure</button></div>
+      <div class="mindmap-actions"><button class="secondary-button" id="newManualMap" type="button">Nouvelle carte</button><button class="secondary-button" id="addMindNode" type="button">+ Branche</button><button class="secondary-button" id="addMindChild" type="button">+ Sous-idée</button><button class="secondary-button" id="renameMindNode" type="button">Renommer</button></div>
+      <div class="map-local-save"><button class="secondary-button" id="saveMindmap" type="button">Enregistrer la carte</button><button class="danger-soft" id="clearMindmap" type="button">Réinitialiser</button><small id="mindmapSaveStatus">Carte locale — aucune donnée envoyée.</small></div>
     </aside>
-    <div class="mindmap-stage-wrap"><div class="mindmap-toolbar"><button id="mindZoomOut" type="button" aria-label="Dézoomer">−</button><span id="mindZoomLabel">100 %</span><button id="mindZoomIn" type="button" aria-label="Zoomer">+</button><button id="mindCenter" type="button">Recentrer</button><button id="deleteMindNode" class="danger-mini" type="button">Supprimer le nœud</button></div><div class="mindmap-canvas" id="mindmapCanvas" aria-live="polite"><div class="mindmap-scene" id="mindmapScene"><p class="mindmap-placeholder">Votre carte apparaîtra ici. Déplacez les idées librement.</p></div></div></div>
+    <div class="mindmap-stage-wrap">
+      <div class="mindmap-toolbar"><button id="mindZoomOut" type="button" aria-label="Dézoomer">−</button><span id="mindZoomLabel">100 %</span><button id="mindZoomIn" type="button" aria-label="Zoomer">+</button><button id="mindCenter" type="button">Recentrer</button><button id="deleteMindNode" class="danger-mini" type="button">Supprimer</button></div>
+      <div class="mindmap-canvas mindmap-canvas-v7" id="mindmapCanvas" aria-live="polite"><div class="mindmap-scene" id="mindmapScene"><p class="mindmap-placeholder">Touchez « Nouvelle carte » pour commencer librement.</p></div></div>
+    </div>
   </section>
 </section>
 
 <section class="view" id="view-francais" data-view="francais" aria-labelledby="frenchTitle" hidden>
- <div class="page-intro"><p class="eyebrow">Français</p><h1 id="frenchTitle">Comprendre, dire, écrire, réutiliser.</h1><p>Un parcours progressif qui relie lecture, vocabulaire, orthographe, grammaire, expression et oral.</p></div>
+ <div class="page-intro french-intro"><p class="eyebrow">Académie de français</p><h1 id="frenchTitle">Une langue vivante se travaille par petites victoires.</h1><p>Lecture, lexique, orthographe, grammaire et expression : choisissez un niveau, pratiquez, puis indiquez ce qui est acquis. Sirāfiq programme le retour au bon moment.</p></div>
  <section class="french-dashboard">
   <div class="french-levels" role="tablist" aria-label="Niveau"><button class="lesson-chip active" data-french-level="fondations">Fondations</button><button class="lesson-chip" data-french-level="consolidation">Consolidation</button><button class="lesson-chip" data-french-level="maitrise">Maîtrise</button></div>
   <div class="french-skill-grid">
-   <button data-french-skill="lecture"><strong>Lecture</strong><small>Comprendre et reformuler</small></button><button data-french-skill="vocabulaire"><strong>Vocabulaire</strong><small>Comprendre et réutiliser</small></button><button data-french-skill="orthographe"><strong>Orthographe</strong><small>Observer et mémoriser</small></button><button data-french-skill="grammaire"><strong>Grammaire</strong><small>Manipuler la phrase</small></button><button data-french-skill="expression"><strong>Expression</strong><small>Produire et améliorer</small></button><button data-go="prononcer"><strong>Oral</strong><small>Prononcer et s'exprimer</small></button>
+   <button class="active" data-french-skill="lecture"><span>01</span><strong>Lecture</strong><small>Comprendre, inférer, reformuler</small></button><button data-french-skill="vocabulaire"><span>02</span><strong>Vocabulaire</strong><small>Nuancer et réutiliser</small></button><button data-french-skill="orthographe"><span>03</span><strong>Orthographe</strong><small>Observer, mémoriser, corriger</small></button><button data-french-skill="grammaire"><span>04</span><strong>Grammaire</strong><small>Manipuler et comprendre la phrase</small></button><button data-french-skill="expression"><span>05</span><strong>Expression</strong><small>Organiser, écrire, améliorer</small></button><button data-go="prononcer"><span>06</span><strong>Oral</strong><small>Articulation, prosodie, aisance</small></button>
   </div>
-  <article class="exercise-card" id="frenchExercise"><div><p class="section-kicker" id="frenchExerciseMeta">Fondations · Lecture</p><h2 id="frenchExerciseTitle">Lire, puis rappeler l’idée essentielle</h2><p id="frenchExercisePrompt">Lisez : « Chaque matin, Lina ouvre la fenêtre pour observer le ciel avant de partir. » Sans relire, dites ce que fait Lina et quand elle le fait.</p></div><textarea id="frenchAnswer" rows="4" placeholder="Votre réponse…"></textarea><div class="exercise-actions"><button class="primary-button" id="checkFrenchExercise" type="button">Vérifier</button><button class="secondary-button" id="nextFrenchExercise" type="button">Exercice suivant</button></div><div id="frenchFeedback" class="exercise-feedback" aria-live="polite"></div></article>
+  <article class="exercise-card french-exercise-card" id="frenchExercise"><div class="exercise-top"><div><p class="section-kicker" id="frenchExerciseMeta">Fondations · Lecture</p><h2 id="frenchExerciseTitle">Lire, puis rappeler l’idée essentielle</h2></div><span class="exercise-number" id="frenchExerciseNumber">1 / 3</span></div><p id="frenchExercisePrompt"></p><textarea id="frenchAnswer" rows="5" placeholder="Répondez ici, sans regarder la correction…"></textarea><div class="exercise-actions"><button class="primary-button" id="checkFrenchExercise" type="button">Voir le corrigé</button><button class="secondary-button" id="nextFrenchExercise" type="button">Exercice suivant</button></div><div id="frenchFeedback" class="exercise-feedback" aria-live="polite"></div><div class="mastery-panel" id="frenchMastery" hidden><small>Après correction, comment était ce rappel ?</small><div><button type="button" data-mastery="again">À revoir</button><button type="button" data-mastery="fragile">Fragile</button><button type="button" data-mastery="acquis">Acquis</button><button type="button" data-mastery="solide">Solide</button></div></div></article>
  </section>
 </section>
 
@@ -229,15 +237,16 @@
     <div class="writing-guide"><div><small>Exercice guidé</small><strong id="writingPracticePrompt">Boucles régulières : 𝓁 𝓁 𝓁</strong><p id="writingPracticeTip">Gardez une hauteur stable et un mouvement continu. Cherchez la régularité avant la vitesse.</p></div><div class="guide-rhythm" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
   </section>
 
-  <div class="writing-toolbar">
-    <button class="secondary-button" id="clearWriting" type="button">Effacer</button>
-    <button class="secondary-button" id="undoWriting" type="button">Annuler</button>
-    <button class="primary-button" id="saveWriting" type="button">Enregistrer</button>
-  </div>
-
-  <div class="writing-surface">
-    <canvas id="writingCanvas" aria-label="Zone d’écriture tactile"></canvas>
-  </div>
+  <section class="writing-studio" id="writingStudio">
+    <div class="writing-toolbar writing-toolbar-v7" aria-label="Outils d’écriture">
+      <div class="tool-cluster"><button class="tool-button active" id="penTool" type="button" title="Stylo">✎ <span>Stylo</span></button><button class="tool-button" id="highlighterTool" type="button" title="Surligneur">▰ <span>Surligneur</span></button><button class="tool-button" id="eraserTool" type="button" title="Gomme">⌫ <span>Gomme</span></button></div>
+      <div class="color-palette" aria-label="Couleur du stylo"><button class="ink-dot active" data-ink="#7d0c2b" style="--ink:#7d0c2b" aria-label="Bordeaux"></button><button class="ink-dot" data-ink="#16151a" style="--ink:#16151a" aria-label="Noir"></button><button class="ink-dot" data-ink="#2458a6" style="--ink:#2458a6" aria-label="Bleu"></button><button class="ink-dot" data-ink="#278060" style="--ink:#278060" aria-label="Vert"></button><button class="ink-dot" data-ink="#9a4a9b" style="--ink:#9a4a9b" aria-label="Prune"></button></div>
+      <div class="stroke-sizes" aria-label="Épaisseur"><button class="stroke-size" data-width="2" aria-label="Fin">•</button><button class="stroke-size active" data-width="4" aria-label="Moyen">●</button><button class="stroke-size" data-width="8" aria-label="Large">⬤</button></div>
+      <div class="tool-cluster utility-tools"><button class="tool-button danger-tool" id="clearWriting" type="button" title="Vider le tableau">🗑 <span>Vider</span></button><button class="tool-button" id="undoWriting" type="button">↶ <span>Annuler</span></button><button class="tool-button" id="toggleWritingBoard" type="button">⛶ <span>Grand tableau</span></button></div>
+      <div class="tool-cluster save-tools"><button class="secondary-button danger-action" id="deleteLastWriting" type="button">Supprimer le dernier</button><button class="primary-button" id="saveWriting" type="button">Enregistrer</button></div>
+    </div>
+    <div class="writing-surface writing-board"><canvas id="writingCanvas" aria-label="Grand tableau d’écriture tactile"></canvas></div>
+  </section>
 
   <p class="diagnostic-note inline-note" id="writingStatus" aria-live="polite"></p>
   <section class="section-block" aria-labelledby="writingGalleryTitle">
@@ -296,7 +305,7 @@
 
   <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./app.js?v=6"></script>
+  <script type="module" src="./app.js?v=7"></script>
 
 <input id="filePicker"
        type="file"
@@ -387,9 +396,9 @@
   <div class="support-viewer-body" id="supportViewerBody"></div>
 </dialog>
 
-  <script type="module" src="./lot1.js?v=5"></script>
-  <script type="module" src="./writing.js?v=6"></script>
-  <script type="module" src="./pronunciation.js?v=6"></script>
-  <script type="module" src="./learning.js?v=6"></script>
+  <script type="module" src="./lot1.js?v=7"></script>
+  <script type="module" src="./writing.js?v=7"></script>
+  <script type="module" src="./pronunciation.js?v=7"></script>
+  <script type="module" src="./learning.js?v=7"></script>
 </body>
 </html>

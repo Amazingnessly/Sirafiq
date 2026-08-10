@@ -1,7 +1,7 @@
-const CACHE_NAME = 'sirafiq-shell-v5';
+const CACHE_NAME = 'sirafiq-shell-v7';
 const APP_FILES = [
-  './', './index.html', './styles.css?v=6', './app.js?v=6', './db.js?v=6', './lot1.js?v=6',
-  './writing.js?v=6', './pronunciation.js?v=6', './learning.js?v=6', './manifest.webmanifest',
+  './', './index.html', './styles.css?v=7', './app.js?v=7', './db.js?v=7', './lot1.js?v=7',
+  './writing.js?v=7', './pronunciation.js?v=7', './learning.js?v=7', './manifest.webmanifest',
   './assets/logo-sirafiq-verrouille.png', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'
 ];
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(APP_FILES)).then(() => self.skipWaiting())));

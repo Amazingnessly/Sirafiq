@@ -1,10 +1,11 @@
 const DB_NAME = 'sirafiq-local';
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 const STORE_META = 'meta';
 const STORE_DIAGNOSTICS = 'diagnostics';
 const STORE_SUPPORTS = 'supports';
 const STORE_RECORDINGS = 'recordings';
 const STORE_WRITINGS = 'writings';
+const STORE_REVIEWS = 'reviews';
 
 function ensureIndex(store, name, keyPath) {
   if (!store.indexNames.contains(name)) store.createIndex(name, keyPath);
@@ -40,6 +41,14 @@ function openDb() {
         ? request.transaction.objectStore(STORE_WRITINGS)
         : db.createObjectStore(STORE_WRITINGS, { keyPath: 'id', autoIncrement: true });
       ensureIndex(writings, 'createdAt', 'createdAt');
+
+
+      let reviews = db.objectStoreNames.contains(STORE_REVIEWS)
+        ? request.transaction.objectStore(STORE_REVIEWS)
+        : db.createObjectStore(STORE_REVIEWS, { keyPath: 'key' });
+      ensureIndex(reviews, 'nextReview', 'nextReview');
+      ensureIndex(reviews, 'domain', 'domain');
+      ensureIndex(reviews, 'mastery', 'mastery');
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error || new Error('IndexedDB indisponible'));
@@ -115,3 +124,13 @@ export function listWritings() { return runRequest(STORE_WRITINGS, 'readonly', s
 export function getWriting(id) { return runRequest(STORE_WRITINGS, 'readonly', s => s.get(Number(id))); }
 export function deleteWriting(id) { return runRequest(STORE_WRITINGS, 'readwrite', s => s.delete(Number(id))); }
 export function countWritings() { return runRequest(STORE_WRITINGS, 'readonly', s => s.count()); }
+
+
+export function upsertReviewItem(record) {
+  if (!record?.key) return Promise.reject(new Error('Clé de révision absente'));
+  const now = new Date().toISOString();
+  return runRequest(STORE_REVIEWS, 'readwrite', s => s.put({ ...record, updatedAt: now, createdAt: record.createdAt || now }));
+}
+export function listReviewItems() { return runRequest(STORE_REVIEWS, 'readonly', s => s.getAll()); }
+export function getReviewItem(key) { return runRequest(STORE_REVIEWS, 'readonly', s => s.get(String(key))); }
+export function deleteReviewItem(key) { return runRequest(STORE_REVIEWS, 'readwrite', s => s.delete(String(key))); }
