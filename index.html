@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=100">
+  <link rel="stylesheet" href="./styles.css?v=111">
   <title>Sirāfiq</title>
 </head>
 <body>
@@ -43,41 +43,38 @@
             <div class="home-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
           </section>
 
-          <section class="today-card coach-card" aria-labelledby="todayTitle">
-            <div class="today-topline">
+          <section class="today-card coach-card agent-command-center" aria-labelledby="todayTitle">
+            <div class="agent-command-head">
               <div>
-                <p class="section-kicker">Programme intelligent local</p>
-                <h2 id="todayTitle">Votre séance est déjà préparée.</h2>
+                <p class="section-kicker">Boussole Sirāfiq · organisateur local</p>
+                <h2 id="todayTitle">Votre prochaine séance, décidée avec vos données.</h2>
+                <p class="today-lead" id="todayLead">Sirāfiq croise vos supports, vos rappels et vos auto-évaluations pour préparer la suite.</p>
               </div>
-              <span class="ready-chip">Appareil prêt ✓</span>
+              <div class="agent-status-stack"><span class="ready-chip">Appareil prêt ✓</span><span class="agent-privacy">100 % local</span></div>
             </div>
-            <p class="today-lead" id="todayLead">Sirāfiq priorise ce qui arrive à échéance, puis ce qui reste fragile.</p>
-            <div class="coach-focus" id="coachFocus"><span class="coach-orb" aria-hidden="true"></span><div><small>À faire maintenant</small><strong id="coachNextTitle">Premier diagnostic d’apprentissage</strong><p id="coachNextReason">Commencez par quelques exercices ; le programme s’adaptera à vos résultats.</p></div></div>
+            <div class="agent-focus-bar" aria-label="Priorité de la séance">
+              <span>Priorité</span>
+              <button type="button" class="agent-focus-chip active" data-agent-focus="balanced">Équilibrée</button>
+              <button type="button" class="agent-focus-chip" data-agent-focus="memory">Mémorisation</button>
+              <button type="button" class="agent-focus-chip" data-agent-focus="oral">Oral</button>
+              <button type="button" class="agent-focus-chip" data-agent-focus="writing">Écriture</button>
+            </div>
+            <div class="agent-command-grid">
+              <article class="coach-focus" id="coachFocus"><span class="coach-orb" aria-hidden="true"></span><div><small>À faire maintenant</small><strong id="coachNextTitle">Premier diagnostic d’apprentissage</strong><p id="coachNextReason">Commencez par quelques exercices ; le programme s’adaptera à vos résultats.</p></div></article>
+              <article class="agent-snapshot"><small>Votre état</small><div class="agent-snapshot-metrics"><span><strong id="todayDue">0</strong> à revoir</span><span><strong id="agentFragileHome">0</strong> fragiles</span><span><strong id="agentUntouchedHome">0</strong> supports à activer</span></div><button class="text-action" type="button" data-go="progres">Voir l’analyse complète →</button></article>
+            </div>
             <div class="session-agenda-shell">
-              <div class="session-agenda-head"><span>Itinéraire proposé</span><small>La priorité change avec vos résultats</small></div>
-              <ol class="session-agenda" id="todayAgenda">
-                <li class="agenda-item is-primary"><span>1</span><div><strong>Révision active</strong><small>Retrouver avant de regarder</small></div><em>Prioritaire</em></li>
-                <li class="agenda-item"><span>2</span><div><strong>Prononciation</strong><small>Un contraste ciblé</small></div><em>6 min</em></li>
-                <li class="agenda-item"><span>3</span><div><strong>Geste d’écriture</strong><small>Régularité avant vitesse</small></div><em>5 min</em></li>
-              </ol>
+              <div class="session-agenda-head"><span>Itinéraire proposé</span><small id="agentAgendaHint">Le plan se réordonne selon vos résultats</small></div>
+              <ol class="session-agenda" id="todayAgenda"></ol>
             </div>
-            <div class="today-plan" id="todayPlan">
-              <div><strong id="todayMinutes">10</strong><small>minutes</small></div>
-              <div><strong id="todayDue">0</strong><small>à revoir</small></div>
-              <div><strong id="todayPractices">0</strong><small>pratiques</small></div>
-            </div>
-            <button class="primary-button today-start" id="startTodaySession" type="button"><span>Commencer ma séance</span><span aria-hidden="true">→</span></button>
+            <div class="today-plan" id="todayPlan"><div><strong id="todayMinutes">10</strong><small>minutes</small></div><div><strong id="agentSupportCountHome">0</strong><small>supports</small></div><div><strong id="todayPractices">0</strong><small>pratiques</small></div></div>
+            <div class="agent-command-actions"><button class="primary-button today-start" id="startTodaySession" type="button"><span>Commencer ma séance</span><span aria-hidden="true">→</span></button><button class="secondary-button" id="agentRefreshPlan" type="button">Réorganiser le plan</button></div>
           </section>
 
-
-          <section class="knowledge-agent-card" aria-labelledby="agentHomeTitle">
+          <section class="knowledge-agent-card agent-organizer-preview" aria-labelledby="agentHomeTitle">
             <div class="agent-emblem" aria-hidden="true"><span></span><span></span><i></i></div>
-            <div class="agent-copy">
-              <p class="section-kicker">Boussole Sirāfiq · locale</p>
-              <h2 id="agentHomeTitle">Où en êtes-vous, vraiment ?</h2>
-              <p id="agentHomeSummary">Commencez quelques pratiques : Sirāfiq distinguera progressivement ce qui est fragile, acquis ou simplement à entretenir.</p>
-            </div>
-            <button class="secondary-button agent-open" type="button" data-go="progres">Voir mon état d’apprentissage →</button>
+            <div class="agent-copy"><p class="section-kicker">Agent d’apprentissage local</p><h2 id="agentHomeTitle">Sirāfiq organise, vous révisez.</h2><p id="agentHomeSummary">Il distingue ce qui doit revenir, ce qui n’a jamais été travaillé et ce qui peut attendre.</p><div class="agent-home-queue" id="agentHomeQueue"></div></div>
+            <button class="secondary-button agent-open" type="button" data-go="progres">Ouvrir la Boussole →</button>
           </section>
 
           <section class="section-block learning-worlds" aria-labelledby="worldsTitle">
@@ -129,6 +126,19 @@
     <article class="pathway-card" id="vocabHub"><div class="pathway-icon">ع</div><div><p class="section-kicker">Arabe</p><h2>Vocabulaire actif</h2><p>Regroupez vos listes de mots, puis travaillez-les par rappel du sens, production et révision espacée.</p><button class="secondary-button pathway-action" type="button" data-preset-category="Arabe">Afficher mes supports arabes</button></div></article>
   </section>
 
+
+
+  <section class="library-agent-board" aria-labelledby="libraryAgentTitle">
+    <div class="library-agent-head">
+      <div><p class="section-kicker">Agent de bibliothèque</p><h2 id="libraryAgentTitle">Sirāfiq range vos supports par prochaine action.</h2><p>Pas de classement décoratif : les supports sont regroupés selon ce qui doit être activé, révisé ou simplement entretenu.</p></div>
+      <button class="secondary-button" type="button" data-go="progres">Voir le planning complet →</button>
+    </div>
+    <div class="library-agent-columns" id="libraryAgentColumns">
+      <article><span>À activer</span><strong>—</strong><small>Supports jamais travaillés</small></article>
+      <article><span>À revoir</span><strong>—</strong><small>Révisions arrivées ou fragiles</small></article>
+      <article><span>À entretenir</span><strong>—</strong><small>Acquis à consolider</small></article>
+    </div>
+  </section>
 
   <section class="memory-lab" aria-labelledby="memoryLabTitle">
     <div class="memory-lab-head">
@@ -212,19 +222,30 @@
 </section>
 
 <section class="view" id="view-francais" data-view="francais" aria-labelledby="frenchTitle" hidden>
-  <div class="page-intro french-intro oral-intro"><p class="eyebrow">Français oral</p><h1 id="frenchTitle">Parler pour expliquer, naturellement.</h1><p>Objectif : une prononciation claire et naturelle en français de France, avec le rythme, les enchaînements et l’aisance nécessaires pour donner un cours.</p></div>
-  <section class="oral-curriculum" aria-labelledby="oralPathTitle">
-    <div class="practice-path-head"><div><p class="section-kicker">Parcours progressif</p><h2 id="oralPathTitle">Du son isolé au mini-cours.</h2></div><span class="evidence-chip">Écouter · Répéter · Enregistrer · Comparer</span></div>
+  <div class="page-intro french-intro oral-intro french-hero-v11"><div><p class="eyebrow">Académie d’oral français</p><h1 id="frenchTitle">Parler comme on enseigne : clair, naturel, vivant.</h1><p>Un entraînement quotidien centré sur la prononciation, la prosodie et la parole pédagogique — pas sur la grammaire scolaire.</p></div><div class="french-hero-mark" aria-hidden="true"><span>FR</span><i></i><b></b></div></div>
+
+  <section class="french-daily-mission" aria-labelledby="frenchDailyTitle">
+    <div class="french-mission-head"><div><p class="section-kicker">Mission du jour · 12 à 18 min</p><h2 id="frenchDailyTitle">Votre entraînement est déjà composé.</h2><p id="frenchDailySummary">Échauffement articulatoire, écoute active, imitation, puis mini-explication.</p></div><button class="primary-button" id="startFrenchDaily" type="button">Lancer la mission →</button></div>
+    <div class="french-mission-steps" id="frenchMissionSteps"></div>
+  </section>
+
+  <section class="oral-curriculum french-academy" aria-labelledby="oralPathTitle">
+    <div class="practice-path-head"><div><p class="section-kicker">Parcours progressif</p><h2 id="oralPathTitle">Du son isolé au cours de 3 minutes.</h2></div><span class="evidence-chip">Écouter · Imiter · Enregistrer · Comparer · Refaire</span></div>
     <div class="oral-stage-strip" role="tablist" aria-label="Étapes du parcours oral">
       <button class="oral-stage active" data-oral-stage="sons" type="button"><span>1</span>Sons</button><button class="oral-stage" data-oral-stage="contrastes" type="button"><span>2</span>Contrastes</button><button class="oral-stage" data-oral-stage="rythme" type="button"><span>3</span>Rythme</button><button class="oral-stage" data-oral-stage="liaisons" type="button"><span>4</span>Enchaînements</button><button class="oral-stage" data-oral-stage="lecture" type="button"><span>5</span>Lecture</button><button class="oral-stage" data-oral-stage="expliquer" type="button"><span>6</span>Expliquer</button><button class="oral-stage" data-oral-stage="aisance" type="button"><span>7</span>Aisance</button>
     </div>
-    <article class="oral-lesson-card">
-      <div class="oral-lesson-copy"><p class="section-kicker" id="oralLessonMeta">Étape 1 · Sons</p><h2 id="oralLessonTitle">Installer /y/ sans glisser vers /u/.</h2><p id="oralLessonGoal">Travaillez lentement la position des lèvres puis augmentez la longueur de l’énoncé.</p><div class="oral-model-line"><small>Modèle du jour</small><strong id="oralModelText">tu · rue · tu as vu · une rue tranquille</strong></div></div>
-      <div class="oral-lesson-actions"><button class="primary-button" id="playOralModel" type="button">▶ Écouter le modèle</button><button class="secondary-button" id="openPronunciationStudio" type="button">M’enregistrer et comparer →</button></div>
-    </article>
+    <article class="oral-lesson-card french-lesson-v11"><div class="oral-lesson-copy"><p class="section-kicker" id="oralLessonMeta">Étape 1 · Sons</p><h2 id="oralLessonTitle">Installer /y/ sans glisser vers /u/.</h2><p id="oralLessonGoal">Travaillez lentement la position des lèvres puis augmentez la longueur de l’énoncé.</p><div class="oral-model-line"><small>Modèle du jour</small><strong id="oralModelText">tu · rue · tu as vu · une rue tranquille</strong></div></div><div class="oral-lesson-actions"><button class="primary-button" id="playOralModel" type="button">▶ Écouter le modèle</button><button class="secondary-button" id="shadowOralModel" type="button">Imitation guidée</button><button class="secondary-button" id="openPronunciationStudio" type="button">M’enregistrer et comparer →</button></div></article>
     <div class="oral-drill-grid" id="oralDrillGrid"></div>
-    <article class="oral-coach-note"><div><p class="section-kicker">Repères d’écoute</p><h3>Ce que Sirāfiq vous demande d’observer</h3></div><ul id="oralCoachChecklist"><li>Le son reste distinct sans exagération.</li><li>Les syllabes non accentuées restent légères.</li><li>Les pauses suivent les groupes de sens.</li></ul></article>
+    <article class="oral-coach-note"><div><p class="section-kicker">Repères d’écoute</p><h3>Ce que vous devez entendre dans votre propre voix</h3></div><ul id="oralCoachChecklist"></ul></article>
   </section>
+
+  <section class="teaching-lab" aria-labelledby="teachingLabTitle">
+    <div class="section-heading split-heading"><div><p class="section-kicker">Laboratoire de parole pédagogique</p><h2 id="teachingLabTitle">S’entraîner à donner un cours.</h2></div><p class="section-aside">Consigne → explication → exemple → reformulation → conclusion.</p></div>
+    <div class="teaching-scenario-grid" id="teachingScenarioGrid"></div>
+    <article class="teaching-stage"><div><small>Scénario sélectionné</small><h3 id="teachingScenarioTitle">Expliquez une idée simplement.</h3><p id="teachingScenarioPrompt">Présentez une notion en 60 secondes : annoncez l’idée, donnez un exemple, puis reformulez.</p></div><div class="teaching-actions"><button class="secondary-button" id="playTeachingModel" type="button">▶ Écouter un modèle</button><button class="primary-button" id="practiceTeachingScenario" type="button">M’enregistrer sur ce scénario →</button></div></article>
+  </section>
+
+  <section class="french-audio-library" aria-labelledby="frenchAudioTitle"><div class="section-heading"><div><p class="section-kicker">Banque d’entraînement</p><h2 id="frenchAudioTitle">Des dizaines de phrases à écouter et imiter.</h2></div></div><div class="french-prompt-bank" id="frenchPromptBank"></div></section>
 </section>
 
 <section class="view" id="view-prononcer" data-view="prononcer" aria-labelledby="pronounceTitle" hidden>
@@ -307,7 +328,7 @@
       <div class="color-palette" aria-label="Couleur du stylo"><button class="ink-dot active" data-ink="#7d0c2b" style="--ink:#7d0c2b" aria-label="Bordeaux"></button><button class="ink-dot" data-ink="#16151a" style="--ink:#16151a" aria-label="Noir"></button><button class="ink-dot" data-ink="#2458a6" style="--ink:#2458a6" aria-label="Bleu"></button><button class="ink-dot" data-ink="#278060" style="--ink:#278060" aria-label="Vert"></button><button class="ink-dot" data-ink="#9a4a9b" style="--ink:#9a4a9b" aria-label="Prune"></button></div>
       <div class="stroke-sizes"><button class="stroke-size" data-width="2" aria-label="Fin">•</button><button class="stroke-size active" data-width="4" aria-label="Moyen">●</button><button class="stroke-size" data-width="8" aria-label="Large">⬤</button></div>
       <div class="paper-options"><button class="paper-button active" type="button" data-writing-paper="lined">Lignes</button><button class="paper-button" type="button" data-writing-paper="grid">Grille</button><button class="paper-button" type="button" data-writing-paper="dots">Points</button><button class="paper-button" type="button" data-writing-paper="blank">Blanc</button></div>
-      <div class="tool-cluster utility-tools"><button class="tool-button danger-tool" id="clearWriting" type="button">🗑 <span>Vider</span></button><button class="tool-button" id="undoWriting" type="button">↶ <span>Annuler</span></button><button class="tool-button" id="addWritingPage" type="button">＋ <span>Page</span></button><button class="tool-button" id="toggleWritingBoard" type="button">⛶ <span>Grand cahier</span></button></div>
+      <div class="tool-cluster utility-tools"><button class="tool-button danger-tool" id="clearWriting" type="button">🗑 <span>Vider</span></button><button class="tool-button" id="undoWriting" type="button">↶ <span>Annuler</span></button><button class="tool-button" id="addWritingPage" type="button">＋ <span>Page</span></button><button class="tool-button danger-tool" id="deleteWritingPage" type="button">− <span>Supprimer page</span></button><button class="tool-button" id="toggleWritingBoard" type="button">⛶ <span>Grand cahier</span></button></div>
       <div class="tool-cluster save-tools"><button class="secondary-button danger-action" id="deleteLastWriting" type="button">Supprimer le dernier</button><button class="primary-button" id="saveWriting" type="button">Enregistrer le cahier</button></div>
     </div>
     <div class="writing-notebook-scroll" id="writingNotebookScroll"><div class="writing-notebook" id="writingNotebook"><article class="writing-page paper-lined" data-writing-page="0"><span class="page-number">1</span><canvas id="writingCanvas" data-writing-canvas="0" aria-label="Page 1 du cahier tactile"></canvas></article></div></div>
@@ -326,7 +347,8 @@
   <section class="progress-learning" aria-labelledby="learningProgressTitle">
     <div class="section-heading progress-heading"><div><p class="section-kicker">Maîtrise</p><h2 id="learningProgressTitle">Votre mémoire en mouvement</h2></div><p class="section-aside">Les états évoluent à partir de vos auto-évaluations et des prochaines dates de révision.</p></div>
 
-    <article class="learning-agent-diagnostic" aria-labelledby="agentProgressTitle"><div class="agent-emblem large" aria-hidden="true"><span></span><span></span><i></i></div><div><p class="section-kicker">Agent d’apprentissage local</p><h2 id="agentProgressTitle">Ce que Sirāfiq comprend de votre progression</h2><p id="agentProgressSummary">Pas encore assez de données. Après quelques séances, Sirāfiq expliquera ce qui est fragile, ce qui se consolide et ce qui doit revenir aujourd’hui.</p><div class="agent-recommendations" id="agentRecommendations"></div></div><button class="primary-button compact-progress-action" id="agentStartRecommendation" type="button">Travailler la priorité →</button></article>
+    <article class="learning-agent-diagnostic boussole-v11" aria-labelledby="agentProgressTitle"><div class="agent-emblem large" aria-hidden="true"><span></span><span></span><i></i></div><div class="boussole-copy"><p class="section-kicker">Boussole Sirāfiq · agent local</p><h2 id="agentProgressTitle">Votre tableau de bord d’apprentissage</h2><p id="agentProgressSummary">Sirāfiq analyse vos pratiques locales pour décider ce qui doit revenir, ce qui peut attendre et quel support mérite d’être activé.</p><div class="agent-recommendations" id="agentRecommendations"></div></div><button class="primary-button compact-progress-action" id="agentStartRecommendation" type="button">Travailler la priorité →</button></article>
+    <section class="agent-planner" aria-labelledby="agentPlannerTitle"><div class="agent-planner-head"><div><p class="section-kicker">Organisation automatique</p><h2 id="agentPlannerTitle">Aujourd’hui, cette semaine, vos supports.</h2></div><div class="agent-plan-tabs"><button class="active" type="button" data-agent-tab="today">Aujourd’hui</button><button type="button" data-agent-tab="week">Cette semaine</button><button type="button" data-agent-tab="supports">Mes supports</button></div></div><div class="agent-plan-panel" id="agentPlanPanel"></div></section>
 
     <div class="mastery-metrics">
       <article class="mastery-metric urgent"><span>À revoir</span><strong id="reviewDueMetric">0</strong><small>à échéance maintenant</small></article>
@@ -367,7 +389,7 @@
       <a href="#prononcer" data-nav="prononcer"><span aria-hidden="true">◉</span><small>Prononcer</small></a>
       <a href="#ecrire" data-nav="ecrire"><span aria-hidden="true">✎</span><small>Écrire</small></a>
       <a href="#cartes" data-nav="cartes"><span aria-hidden="true">⌘</span><small>Cartes</small></a>
-      <a href="#progres" data-nav="progres"><span aria-hidden="true">↗</span><small>Progrès</small></a>
+      <a href="#progres" data-nav="progres"><span aria-hidden="true">⌖</span><small>Boussole</small></a>
     </nav>
   </div>
 
@@ -392,7 +414,7 @@
 
   <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./app.js?v=100"></script>
+  <script type="module" src="./app.js?v=111"></script>
 
 <input id="filePicker"
        type="file"
@@ -483,9 +505,9 @@
   <div class="support-viewer-body" id="supportViewerBody"></div>
 </dialog>
 
-  <script type="module" src="./lot1.js?v=100"></script>
-  <script type="module" src="./writing.js?v=100"></script>
-  <script type="module" src="./pronunciation.js?v=100"></script>
-  <script type="module" src="./learning.js?v=100"></script>
+  <script type="module" src="./lot1.js?v=111"></script>
+  <script type="module" src="./writing.js?v=111"></script>
+  <script type="module" src="./pronunciation.js?v=111"></script>
+  <script type="module" src="./learning.js?v=111"></script>
 </body>
 </html>

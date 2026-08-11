@@ -1,4 +1,4 @@
-import { addRecording, listRecordings, getRecording, deleteRecording, addLearningEvent } from './db.js?v=100';
+import { addRecording, listRecordings, getRecording, deleteRecording, addLearningEvent } from './db.js?v=111';
 const $=id=>document.getElementById(id);
 const startButton=$('recordStart'), pauseButton=$('recordPause'), stopButton=$('recordStop'), saveButton=$('recordSave'), discardButton=$('recordDiscard'), titleInput=$('recordTitle'), timer=$('recordTimer'), status=$('recordStatus'), preview=$('recordPreview'), library=$('recordingLibrary');
 const playModelButton=$('playPronunciationModel'), playTakeButton=$('playCurrentTake'), compareModelText=$('compareModelText'), compareTakeState=$('compareTakeState'), observation=$('pronunciationObservation');

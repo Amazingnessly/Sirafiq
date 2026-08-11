@@ -3,7 +3,7 @@ import {
   listSupports,
   getSupport,
   deleteSupport
-} from './db.js?v=100';
+} from './db.js?v=111';
 
 const $ = id => document.getElementById(id);
 

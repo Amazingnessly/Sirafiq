@@ -3,8 +3,8 @@ import {
   listSupports, getSupport,
   listReviewItems, upsertReviewItem,
   addLearningEvent, listLearningEvents
-} from './db.js?v=100';
-import { createMindMapModel } from './mindmap-engine.js?v=100';
+} from './db.js?v=111';
+import { createMindMapModel } from './mindmap-engine.js?v=111';
 
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
@@ -19,6 +19,10 @@ const masteryPlan = {
 
 let dueItems = [];
 let currentAgentPriority = null;
+let currentAgentRoute = '#memoriser';
+let agentFocus = localStorage.getItem('sirafiq-agent-focus') || 'balanced';
+let agentTab = 'today';
+let latestAgentData = {supports:[],reviews:[],events:[],due:[],fragile:[],untouched:[]};
 
 function routeForDomain(domain='') {
   const d=String(domain).toLowerCase();
@@ -28,10 +32,66 @@ function routeForDomain(domain='') {
   return '#memoriser';
 }
 
+
+function domainLabel(domain=''){
+  const d=String(domain).toLowerCase();
+  if(d.includes('pron')||d.includes('oral')||d.includes('franc')) return 'Oral français';
+  if(d.includes('écri')||d.includes('ecri')) return 'Écriture';
+  if(d.includes('carte')) return 'Carte mentale';
+  return 'Mémorisation';
+}
+function buildAgentPlan(data=latestAgentData, focus=agentFocus){
+  const tasks=[];
+  const push=(task)=>{if(task && !tasks.some(x=>x.key===task.key))tasks.push(task);};
+  const due=data.due||[], fragile=data.fragile||[], untouched=data.untouched||[];
+  if(focus==='oral') push({key:'oral-daily',title:'Mission orale française',detail:'Écoute, imitation puis mini-explication',meta:'8 min',route:'#francais',kind:'oral'});
+  if(focus==='writing') push({key:'writing-daily',title:'Geste d’écriture du jour',detail:'Français ou arabe · précision puis fluidité',meta:'7 min',route:'#ecrire',kind:'writing'});
+  if(focus==='memory' && (due[0]||fragile[0])) { const r=due[0]||fragile[0]; push({key:`review:${r.key}`,title:r.title||'Révision active',detail:`${r.mastery||'À revoir'} · retrouver avant de regarder`,meta:'Prioritaire',route:routeForDomain(r.domain),kind:'review'}); }
+  const primary=due[0]||fragile[0];
+  if(primary) push({key:`review:${primary.key}`,title:primary.title||'Révision prioritaire',detail:due.includes(primary)?'Échéance arrivée · rappel actif':`${primary.mastery||'Fragile'} · reprise courte`,meta:'Prioritaire',route:routeForDomain(primary.domain),kind:'review'});
+  if(untouched[0]) push({key:`support:${untouched[0].id}`,title:`Activer « ${untouched[0].title||'ce support'} »`,detail:'Ce support est présent mais n’a encore nourri aucune révision',meta:'6 min',route:'#memoriser',kind:'support'});
+  if(focus!=='oral') push({key:'oral-daily',title:'Mission orale française',detail:'Prononcer, rythmer puis expliquer naturellement',meta:'8 min',route:'#francais',kind:'oral'});
+  if(focus!=='writing') push({key:'writing-daily',title:'Geste d’écriture du jour',detail:'Un exercice guidé, puis une ligne libre',meta:'7 min',route:'#ecrire',kind:'writing'});
+  if(!tasks.length) push({key:'import',title:'Importer ou choisir un support',detail:'Sirāfiq a besoin de matière pour organiser vos prochaines révisions',meta:'Départ',route:'#memoriser',kind:'support'});
+  return tasks.slice(0,4);
+}
+function renderAgentQueue(plan){
+  if($('agentHomeQueue')) $('agentHomeQueue').innerHTML=plan.slice(0,3).map((t,i)=>`<button type="button" data-agent-route="${esc(t.route)}"><span>${i+1}</span><div><strong>${esc(t.title)}</strong><small>${esc(t.detail)}</small></div><em>${esc(t.meta)}</em></button>`).join('');
+}
+function renderLibraryAgentBoard(){
+  const host=$('libraryAgentColumns'); if(!host)return;
+  const data=latestAgentData;
+  const dueIds=new Set((data.due||[]).map(r=>String(r.supportId||'')).filter(Boolean));
+  const fragileIds=new Set((data.fragile||[]).map(r=>String(r.supportId||'')).filter(Boolean));
+  const reviewIds=new Set([...dueIds,...fragileIds]);
+  const stableReviews=(data.reviews||[]).filter(r=>['acquis','maîtrisé','solide'].includes(String(r.mastery||'').toLowerCase()));
+  const stableIds=new Set(stableReviews.map(r=>String(r.supportId||'')).filter(Boolean));
+  const untouched=(data.untouched||[]).slice(0,4);
+  const priority=(data.supports||[]).filter(x=>reviewIds.has(String(x.id))).slice(0,4);
+  const stable=(data.supports||[]).filter(x=>stableIds.has(String(x.id))&&!reviewIds.has(String(x.id))).slice(0,4);
+  const block=(label,items,empty,accent)=>`<article class="library-agent-column ${accent}"><div class="library-agent-column-head"><span>${label}</span><strong>${items.length}</strong></div><div class="library-agent-list">${items.length?items.map(x=>`<button type="button" data-agent-review-support="${x.id}"><span>${esc((x.category||'Support').slice(0,2))}</span><div><strong>${esc(x.title||'Support')}</strong><small>${esc(x.category||'Autre')}</small></div><em>Travailler →</em></button>`).join(''):`<p>${empty}</p>`}</div></article>`;
+  host.innerHTML=block('À activer',untouched,'Tous vos supports ont déjà été utilisés.','activate')+block('À revoir',priority,'Aucun support n’est prioritaire maintenant.','review')+block('À entretenir',stable,'Les acquis apparaîtront après vos auto-évaluations.','stable');
+}
+
+function renderAgentPlanner(){
+  const panel=$('agentPlanPanel'); if(!panel)return;
+  document.querySelectorAll('[data-agent-tab]').forEach(b=>b.classList.toggle('active',b.dataset.agentTab===agentTab));
+  const data=latestAgentData, plan=buildAgentPlan(data);
+  if(agentTab==='today'){
+    panel.innerHTML=`<div class="agent-today-plan">${plan.map((t,i)=>`<article><span>${i+1}</span><div><small>${esc(t.meta)}</small><strong>${esc(t.title)}</strong><p>${esc(t.detail)}</p></div><button type="button" data-agent-route="${esc(t.route)}">Commencer →</button></article>`).join('')}</div>`;
+  }else if(agentTab==='week'){
+    const next=(data.reviews||[]).slice().sort((a,b)=>new Date(a.nextReview||0)-new Date(b.nextReview||0)).slice(0,7);
+    panel.innerHTML=next.length?`<div class="agent-week-list">${next.map(r=>`<article><span>${r.nextReview?new Date(r.nextReview).toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit'}):'À planifier'}</span><div><strong>${esc(r.title||'Révision')}</strong><small>${esc(domainLabel(r.domain))} · ${esc(r.mastery||'en apprentissage')}</small></div></article>`).join('')}</div>`:`<div class="agent-empty-state"><strong>La semaine va se construire avec vos premières évaluations.</strong><p>Une auto-évaluation suffit pour que Sirāfiq programme automatiquement le retour.</p></div>`;
+  }else{
+    const grouped={}; (data.supports||[]).forEach(x=>{const k=x.category||'Autre';(grouped[k]??=[]).push(x)});
+    panel.innerHTML=`<div class="agent-support-overview"><div class="agent-support-summary"><strong>${data.supports.length}</strong><span>supports locaux</span><strong>${data.untouched.length}</strong><span>encore jamais activés</span></div>${Object.entries(grouped).map(([k,v])=>`<article><div><strong>${esc(k)}</strong><small>${v.length} support${v.length>1?'s':''}</small></div><button type="button" data-agent-category="${esc(k)}">Voir →</button></article>`).join('')}</div>`;
+  }
+}
+
 async function refreshHomeMetrics() {
   try {
-    const [supports, recordings, writings, reviews, events] = await Promise.all([
-      countSupports(), countRecordings(), countWritings(), listReviewItems(), listLearningEvents().catch(()=>[])
+    const [supports, recordings, writings, reviews, events, supportList] = await Promise.all([
+      countSupports(), countRecordings(), countWritings(), listReviewItems(), listLearningEvents().catch(()=>[]), listSupports().catch(()=>[])
     ]);
     const now = Date.now();
     dueItems = reviews
@@ -39,12 +99,19 @@ async function refreshHomeMetrics() {
       .sort((a,b)=>new Date(a.nextReview||0)-new Date(b.nextReview||0));
     const fragile = reviews.filter(r => ['fragile','à revoir'].includes(String(r.mastery||'').toLowerCase()));
     const mastered = reviews.filter(r => ['acquis','maîtrisé','solide'].includes(String(r.mastery||'').toLowerCase()));
+    const touchedSupportIds = new Set([...reviews.map(r=>String(r.supportId||'')), ...events.map(e=>String(e.supportId||''))].filter(Boolean));
+    const untouched = supportList.filter(x=>!touchedSupportIds.has(String(x.id)));
+    latestAgentData={supports:supportList,reviews,events,due:dueItems,fragile,untouched};
     const practices = recordings + writings + events.length;
     const next = dueItems[0] || fragile[0] || reviews[0] || null;
     currentAgentPriority = next;
+    const agentPlan=buildAgentPlan(latestAgentData); currentAgentRoute=agentPlan[0]?.route||routeForDomain(next?.domain);
 
     if ($('todayPractices')) $('todayPractices').textContent = practices;
     if ($('todayDue')) $('todayDue').textContent = dueItems.length;
+    if ($('agentFragileHome')) $('agentFragileHome').textContent = fragile.length;
+    if ($('agentUntouchedHome')) $('agentUntouchedHome').textContent = untouched.length;
+    if ($('agentSupportCountHome')) $('agentSupportCountHome').textContent = supports;
     if ($('todayMinutes')) $('todayMinutes').textContent = dueItems.length >= 5 ? '20' : dueItems.length >= 2 ? '15' : dueItems.length ? '10' : '8';
     if ($('coachNextTitle')) $('coachNextTitle').textContent = next?.title || (supports ? 'Consolider un support déjà présent' : 'Importer un premier support');
     if ($('coachNextReason')) $('coachNextReason').textContent = next
@@ -57,17 +124,9 @@ async function refreshHomeMetrics() {
       : 'Commencez quelques pratiques : la séance quotidienne deviendra de plus en plus précise.';
 
     if ($('todayAgenda')) {
-      const agenda = [];
-      if (next) {
-        agenda.push({title: next.title || 'Révision prioritaire', detail: dueItems.includes(next) ? 'À revoir aujourd’hui · rappel actif' : `${next.mastery || 'À consolider'} · reprise courte`, meta: 'Prioritaire'});
-      } else if (supports) {
-        agenda.push({title:'Rappel actif sur un support', detail:'Choisir un support déjà présent et restituer avant de regarder', meta:'8 min'});
-      } else {
-        agenda.push({title:'Importer un premier support', detail:'Sirāfiq a besoin de matière pour préparer des révisions utiles', meta:'Départ'});
-      }
-      agenda.push({title:'Français oral', detail:'Un exercice ciblé : articulation, rythme ou explication', meta:'6 min'});
-      agenda.push({title:'Geste d’écriture', detail:'Français ou arabe · précision puis fluidité', meta:'5 min'});
-      $('todayAgenda').innerHTML = agenda.map((item,i)=>`<li class="agenda-item ${i===0?'is-primary':''}"><span>${i+1}</span><div><strong>${esc(item.title)}</strong><small>${esc(item.detail)}</small></div><em>${esc(item.meta)}</em></li>`).join('');
+      const agenda=buildAgentPlan(latestAgentData);
+      $('todayAgenda').innerHTML = agenda.map((item,i)=>`<li class="agenda-item ${i===0?'is-primary':''}" data-agent-route="${esc(item.route)}"><span>${i+1}</span><div><strong>${esc(item.title)}</strong><small>${esc(item.detail)}</small></div><em>${esc(item.meta)}</em></li>`).join('');
+      renderAgentQueue(agenda);
     }
 
     if ($('agentHomeSummary')) {
@@ -75,11 +134,20 @@ async function refreshHomeMetrics() {
         ? `${dueItems.length} à revoir maintenant · ${fragile.length} fragile${fragile.length>1?'s':''} · ${mastered.length} acquis ou maîtrisé${mastered.length>1?'s':''}. ${next ? `Priorité : ${next.title}.` : ''}`
         : `Sirāfiq n’invente pas votre niveau. Il attend vos premières restitutions, enregistrements ou séances d’écriture pour distinguer ce qui est acquis de ce qui doit revenir.`;
     }
+    renderAgentPlanner();
+    renderLibraryAgentBoard();
   } catch (error) { console.warn('Programme de révision indisponible', error); }
 }
 
-$('startTodaySession')?.addEventListener('click', () => { location.hash = routeForDomain(currentAgentPriority?.domain); });
+$('startTodaySession')?.addEventListener('click', () => { location.hash = currentAgentRoute || routeForDomain(currentAgentPriority?.domain); });
 $('agentStartRecommendation')?.addEventListener('click', () => { location.hash = routeForDomain(currentAgentPriority?.domain); });
+
+document.querySelectorAll('[data-agent-focus]').forEach(button=>button.addEventListener('click',()=>{agentFocus=button.dataset.agentFocus||'balanced';localStorage.setItem('sirafiq-agent-focus',agentFocus);document.querySelectorAll('[data-agent-focus]').forEach(b=>b.classList.toggle('active',b.dataset.agentFocus===agentFocus));refreshHomeMetrics();}));
+document.querySelectorAll('[data-agent-focus]').forEach(b=>b.classList.toggle('active',b.dataset.agentFocus===agentFocus));
+$('agentRefreshPlan')?.addEventListener('click',()=>{const order=['balanced','memory','oral','writing'];agentFocus=order[(order.indexOf(agentFocus)+1)%order.length];localStorage.setItem('sirafiq-agent-focus',agentFocus);document.querySelectorAll('[data-agent-focus]').forEach(b=>b.classList.toggle('active',b.dataset.agentFocus===agentFocus));refreshHomeMetrics();});
+document.querySelectorAll('[data-agent-tab]').forEach(b=>b.addEventListener('click',()=>{agentTab=b.dataset.agentTab||'today';renderAgentPlanner();}));
+document.addEventListener('click',e=>{const route=e.target.closest('[data-agent-route]');if(route){location.hash=route.dataset.agentRoute||'#memoriser';return;}const review=e.target.closest('[data-agent-review-support]');if(review){location.hash='#memoriser';setTimeout(()=>window.dispatchEvent(new CustomEvent('sirafiq:review-support',{detail:{id:Number(review.dataset.agentReviewSupport)}})),100);return;}const cat=e.target.closest('[data-agent-category]');if(cat){location.hash='#memoriser';setTimeout(()=>{const filter=$('supportCategoryFilter');if(filter){filter.value=cat.dataset.agentCategory||'';filter.dispatchEvent(new Event('change',{bubbles:true}));}},120);}});
+
 
 document.querySelectorAll('[data-focus]').forEach(button => {
   button.addEventListener('click', () => {
@@ -207,6 +275,34 @@ const oralPath={
   expliquer:{meta:'Étape 6 · Parole pédagogique',title:'Expliquer comme devant un élève.',goal:'Annoncez l’idée, donnez un exemple, puis reformulez.',model:'L’idée principale est simple : nous cherchons à distinguer ce qui est certain de ce qui reste à vérifier. Prenons un exemple.',drills:['Donnez une consigne en une phrase.','Définissez un terme sans lire.','Expliquez une idée puis reformulez-la autrement.'],checks:['L’objectif est annoncé rapidement.','Les phrases restent assez courtes pour être suivies.','La reformulation apporte de la clarté, pas seulement une répétition.']},
   aisance:{meta:'Étape 7 · Aisance',title:'Tenir un mini-cours sans perdre la clarté.',goal:'Parlez 60 à 90 secondes avec un plan simple et des transitions naturelles.',model:'Aujourd’hui, nous allons voir trois points. D’abord le principe, ensuite un exemple, et enfin la manière de vérifier que nous avons bien compris.',drills:['Introduction de 20 secondes.','Explication structurée de 60 secondes.','Conclusion et reformulation en 15 secondes.'],checks:['Le plan reste perceptible du début à la fin.','Le débit est stable même quand vous cherchez vos mots.','Les transitions aident l’auditeur à suivre.']}
 };
+
+const teachingScenarios=[
+  {title:'Définir sans lire',prompt:'Expliquez un terme en 45 secondes : définition simple, exemple concret, puis reformulation.',model:'Je vais définir cette notion simplement. Elle désigne… Prenons un exemple concret… Autrement dit…'},
+  {title:'Donner une consigne',prompt:'Formulez une consigne de cours précise en trois étapes, sans phrases inutiles.',model:'Voici ce que vous allez faire. D’abord… Ensuite… Enfin, vérifiez que…'},
+  {title:'Corriger avec tact',prompt:'Expliquez une erreur fréquente sans brusquer : constat, correction, nouvelle tentative.',model:'Il y a un point à ajuster. Ici, on entend… Essayez plutôt… Très bien, reprenons une fois.'},
+  {title:'Faire une transition',prompt:'Passez d’une idée à une autre en gardant le fil du cours.',model:'Nous avons posé le principe. Maintenant, regardons ce qu’il change dans un exemple concret.'},
+  {title:'Répondre à une question',prompt:'Répondez en 60 secondes : réponse directe, raison, exemple, conclusion courte.',model:'La réponse courte est oui. La raison principale est… Par exemple… Donc, retenez surtout que…'},
+  {title:'Mini-cours 3 minutes',prompt:'Introduction, trois idées, un exemple, conclusion et rappel de l’essentiel.',model:'Aujourd’hui, nous allons voir trois points. D’abord… Ensuite… Enfin… Prenons un exemple… Pour conclure, retenez surtout…'}
+];
+const frenchPromptBank={
+  articulation:['Tu as vu une rue tranquille.','Une étude utile mérite une lecture attentive.','Peu à peu, le groupe devient plus sûr.','Le but est de parler clairement, sans forcer.','Cette phrase doit rester fluide et légère.','Je voudrais que vous reteniez surtout ce point.'],
+  rythme:['Aujourd’hui / nous allons travailler / une idée essentielle.','Dans ce passage / observez d’abord / la différence principale.','Si vous hésitez / ralentissez légèrement / puis reprenez.','L’objectif / n’est pas d’aller vite / mais d’être compris.','Nous avons vu le principe / passons maintenant / à un exemple.','Avant de conclure / revenons / sur le point le plus important.'],
+  enseignement:['Je vais commencer par une définition simple.','Prenons un exemple pour rendre cette idée concrète.','Autrement dit, vous pouvez retenir la chose suivante.','Il y a ici une erreur fréquente que nous allons corriger.','Je vous laisse quelques secondes pour essayer par vous-même.','Nous allons vérifier ensemble ce que vous avez compris.','La première étape consiste à observer, la deuxième à comparer.','Ce détail est important parce qu’il change le sens de l’ensemble.','Si vous ne retenez qu’une chose, retenez celle-ci.','Nous reprendrons ce point plus tard pour le consolider.'],
+  naturel:['Je vais vous montrer comment je m’y prends.','On peut le voir d’une autre manière.','Ce n’est pas compliqué, mais il faut être précis.','Laissez-moi reformuler plus simplement.','Vous voyez l’idée ? Prenons maintenant un cas différent.','Très bien, on continue avec l’étape suivante.']
+};
+let selectedTeachingScenario=0;
+function renderTeachingLab(){
+  const grid=$('teachingScenarioGrid'); if(grid)grid.innerHTML=teachingScenarios.map((x,i)=>`<button type="button" data-teaching-scenario="${i}" class="${i===selectedTeachingScenario?'active':''}"><span>${String(i+1).padStart(2,'0')}</span><strong>${esc(x.title)}</strong><small>${esc(x.prompt)}</small></button>`).join('');
+  const x=teachingScenarios[selectedTeachingScenario]; if($('teachingScenarioTitle'))$('teachingScenarioTitle').textContent=x.title;if($('teachingScenarioPrompt'))$('teachingScenarioPrompt').textContent=x.prompt;
+}
+function renderFrenchPromptBank(){const bank=$('frenchPromptBank');if(!bank)return;bank.innerHTML=Object.entries(frenchPromptBank).map(([k,items])=>`<article><div><small>${esc(k)}</small><strong>${items.length} modèles</strong></div>${items.map(x=>`<button type="button" data-french-prompt="${esc(x)}">▶ ${esc(x)}</button>`).join('')}</article>`).join('');}
+function renderFrenchDailyMission(){
+  const date=new Date(), stageKeys=Object.keys(oralPath), stage=stageKeys[(date.getDate()+date.getMonth())%stageKeys.length], lesson=oralPath[stage];
+  const scenario=teachingScenarios[(date.getDate()+date.getDay())%teachingScenarios.length];
+  if($('frenchDailySummary'))$('frenchDailySummary').textContent=`Aujourd’hui : ${lesson.meta.toLowerCase()}, imitation d’un modèle puis « ${scenario.title} ».`;
+  if($('frenchMissionSteps'))$('frenchMissionSteps').innerHTML=[{n:'01',t:'Échauffer',d:lesson.drills[0]||lesson.model},{n:'02',t:'Imiter',d:lesson.model},{n:'03',t:'Comparer',d:'Enregistrez une prise puis alternez modèle et prise.'},{n:'04',t:'Enseigner',d:scenario.prompt}].map(x=>`<article><span>${x.n}</span><strong>${esc(x.t)}</strong><p>${esc(x.d)}</p></article>`).join('');
+}
+
 let currentOralStage='sons';
 function speakFrench(text){
   if(!('speechSynthesis' in window)){return false;}
@@ -249,8 +345,19 @@ function setPronunciationPrompt(key='sons'){
   localStorage.setItem('sirafiq-pronunciation-prompt',prompt); localStorage.setItem('sirafiq-pronunciation-observation',tip);
   window.dispatchEvent(new CustomEvent('sirafiq:pronunciation-prompt',{detail:{prompt,tip}}));
 }
+
+$('shadowOralModel')?.addEventListener('click',()=>{const text=$('oralModelText')?.textContent||'';if(!speakFrench(text))alert('La synthèse vocale française n’est pas disponible sur cet appareil.');});
+$('teachingScenarioGrid')?.addEventListener('click',e=>{const b=e.target.closest('[data-teaching-scenario]');if(!b)return;selectedTeachingScenario=Number(b.dataset.teachingScenario)||0;renderTeachingLab();});
+$('playTeachingModel')?.addEventListener('click',()=>speakFrench(teachingScenarios[selectedTeachingScenario].model));
+$('practiceTeachingScenario')?.addEventListener('click',()=>{const x=teachingScenarios[selectedTeachingScenario];localStorage.setItem('sirafiq-pronunciation-prompt',x.prompt);localStorage.setItem('sirafiq-pronunciation-tip','Écoutez la structure : attaque claire, groupes de sens, pauses utiles, conclusion nette.');location.hash='#prononcer';});
+$('startFrenchDaily')?.addEventListener('click',()=>{const first=document.querySelector('[data-oral-stage].active')||document.querySelector('[data-oral-stage]');first?.scrollIntoView({behavior:prefersReducedMotion()?'auto':'smooth',block:'center'});$('playOralModel')?.focus();});
+$('frenchPromptBank')?.addEventListener('click',e=>{const b=e.target.closest('[data-french-prompt]');if(b)speakFrench(b.dataset.frenchPrompt||'');});
+renderTeachingLab();renderFrenchPromptBank();renderFrenchDailyMission();
+
 document.querySelectorAll('[data-pron-lesson]').forEach(button=>button.addEventListener('click',()=>{
-  document.querySelectorAll('[data-pron-lesson]').forEach(b=>b.classList.toggle('active',b===button)); setPronunciationPrompt(button.dataset.pronLesson);
+  
+
+document.querySelectorAll('[data-pron-lesson]').forEach(b=>b.classList.toggle('active',b===button)); setPronunciationPrompt(button.dataset.pronLesson);
   const title=$('recordTitle'); if(title&&!title.value.trim()) title.value=`Exercice — ${button.textContent.trim()}`;
 }));
 $('playPronunciationModel')?.addEventListener('click',()=>speakFrench($('compareModelText')?.textContent||$('pronunciationPrompt')?.textContent||''));

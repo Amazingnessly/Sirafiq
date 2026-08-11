@@ -1,8 +1,8 @@
-import { addWriting, listWritings, deleteWriting, addLearningEvent } from './db.js?v=100';
+import { addWriting, listWritings, deleteWriting, addLearningEvent } from './db.js?v=111';
 
 const $=id=>document.getElementById(id);
 const notebook=$('writingNotebook'), scroll=$('writingNotebookScroll'), studio=$('writingStudio');
-const clearButton=$('clearWriting'), undoButton=$('undoWriting'), saveButton=$('saveWriting'), deleteLastButton=$('deleteLastWriting'), boardButton=$('toggleWritingBoard'), addPageButton=$('addWritingPage');
+const clearButton=$('clearWriting'), undoButton=$('undoWriting'), saveButton=$('saveWriting'), deleteLastButton=$('deleteLastWriting'), boardButton=$('toggleWritingBoard'), addPageButton=$('addWritingPage'), deletePageButton=$('deleteWritingPage');
 const penButton=$('penTool'), highlighterButton=$('highlighterTool'), eraserButton=$('eraserTool'), moveButton=$('moveTool');
 const status=$('writingStatus'), gallery=$('writingGallery'), view=$('view-ecrire');
 let pages=[{strokes:[]}], activePage=0, drawing=false, pointerId=null, currentStroke=null;
@@ -35,6 +35,7 @@ function resizeAll(){requestAnimationFrame(()=>canvases().forEach(resizePage));}
 function bindCanvas(canvas){
   canvas.style.touchAction=tool==='move'?'pan-y':'none';
   canvas.addEventListener('pointerdown',event=>{
+    activePage=pageIndexForCanvas(canvas);markActivePage();
     if(tool==='move'||event.isPrimary===false||(event.pointerType==='mouse'&&event.button!==0))return;
     const p=point(event,canvas);if(!p)return;event.preventDefault();activePage=pageIndexForCanvas(canvas);ensurePagesData(activePage+1);drawing=true;pointerId=event.pointerId;currentStroke={tool,color:ink,width,points:[p]};pages[activePage].strokes.push(currentStroke);try{canvas.setPointerCapture(event.pointerId);}catch{}redrawPage(activePage);
   },{passive:false});
@@ -45,7 +46,8 @@ function bindCanvas(canvas){
   canvas.addEventListener('pointerup',stop,{passive:false});canvas.addEventListener('pointercancel',stop,{passive:false});canvas.addEventListener('lostpointercapture',()=>{drawing=false;pointerId=null;currentStroke=null;});
 }
 
-function applyPaper(){pageEls().forEach(page=>{page.classList.remove('paper-lined','paper-grid','paper-dots','paper-blank');page.classList.add(`paper-${paperMode}`);});document.querySelectorAll('[data-writing-paper]').forEach(b=>b.classList.toggle('active',b.dataset.writingPaper===paperMode));localStorage.setItem('sirafiq-writing-paper',paperMode);}
+function markActivePage(){pageEls().forEach((page,i)=>page.classList.toggle('active-writing-page',i===activePage));}
+function applyPaper(){pageEls().forEach(page=>{page.classList.remove('paper-lined','paper-grid','paper-dots','paper-blank');page.classList.add(`paper-${paperMode}`);});document.querySelectorAll('[data-writing-paper]').forEach(b=>b.classList.toggle('active',b.dataset.writingPaper===paperMode));localStorage.setItem('sirafiq-writing-paper',paperMode);markActivePage();}
 function addPage(strokes=[]){
   const index=pages.length;pages.push({strokes:Array.isArray(strokes)?strokes:[]});const article=document.createElement('article');article.className=`writing-page paper-${paperMode}`;article.dataset.writingPage=String(index);article.innerHTML=`<span class="page-number">${index+1}</span><canvas data-writing-canvas="${index}" aria-label="Page ${index+1} du cahier tactile"></canvas>`;notebook.appendChild(article);const canvas=article.querySelector('canvas');bindCanvas(canvas);resizePage(canvas);return article;
 }
@@ -69,13 +71,29 @@ async function removeWriting(id){if(!confirm('Supprimer définitivement ce cahie
 async function deleteLastWriting(){const items=(await listWritings()).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));if(!items.length){setStatus('Aucun cahier enregistré à supprimer.');return;}if(!confirm(`Supprimer définitivement « ${items[0].title||'le dernier cahier'} » ?`))return;await deleteWriting(items[0].id);window.dispatchEvent(new CustomEvent('sirafiq:data-changed'));setStatus('Dernier cahier supprimé.');await refreshGallery();}
 async function resumeWriting(id){const items=await listWritings();const item=items.find(x=>Number(x.id)===Number(id));if(!item)return;paperMode=item.paperMode||paperMode;const data=item.notebookPages?.length?item.notebookPages:[{strokes:item.strokes||[]}];rebuildNotebook(data);setStatus(`Cahier repris · ${data.length} page${data.length>1?'s':''}.`);scroll?.scrollTo({top:0,behavior:'smooth'});}
 
+
+function deleteActivePage(){
+  if(!pages.length)return;
+  const current=activePage;
+  if(pages.length===1){
+    if(pages[0].strokes.length && !confirm('Vider l’unique page du cahier ?')) return;
+    pages[0].strokes=[]; redrawPage(0); setStatus('Page 1 vidée.'); return;
+  }
+  if(!confirm(`Supprimer la page ${current+1} de ce cahier ?`)) return;
+  pages.splice(current,1);
+  activePage=Math.max(0,Math.min(current,pages.length-1));
+  rebuildNotebook(pages);
+  activePage=Math.max(0,Math.min(current,pages.length-1)); markActivePage();
+  setStatus(`Page supprimée · ${pages.length} page${pages.length>1?'s':''} restante${pages.length>1?'s':''}.`);
+}
 penButton?.addEventListener('click',()=>setTool('pen'));highlighterButton?.addEventListener('click',()=>setTool('highlighter'));eraserButton?.addEventListener('click',()=>setTool('eraser'));moveButton?.addEventListener('click',()=>setTool('move'));
 document.querySelectorAll('[data-ink]').forEach(button=>button.addEventListener('click',()=>{ink=button.dataset.ink||ink;document.querySelectorAll('[data-ink]').forEach(b=>b.classList.toggle('active',b===button));if(tool==='eraser'||tool==='move')setTool('pen');}));
 document.querySelectorAll('[data-width]').forEach(button=>button.addEventListener('click',()=>{width=Number(button.dataset.width)||4;document.querySelectorAll('[data-width]').forEach(b=>b.classList.toggle('active',b===button));}));
 document.querySelectorAll('[data-writing-paper]').forEach(b=>b.addEventListener('click',()=>{paperMode=['lined','grid','dots','blank'].includes(b.dataset.writingPaper)?b.dataset.writingPaper:'lined';applyPaper();}));
 clearButton?.addEventListener('click',()=>{pages.forEach(p=>p.strokes=[]);canvases().forEach((_,i)=>redrawPage(i));setStatus('Cahier courant vidé. Les cahiers déjà enregistrés ne sont pas touchés.');});
 undoButton?.addEventListener('click',()=>{let index=activePage;if(!pages[index]?.strokes.length)index=[...pages].map((p,i)=>p.strokes.length?i:-1).filter(i=>i>=0).pop()??0;if(!pages[index]?.strokes.length)return;pages[index].strokes.pop();redrawPage(index);setStatus(`Dernier trait annulé sur la page ${index+1}.`);});
-addPageButton?.addEventListener('click',()=>{const page=addPage([]);activePage=pages.length-1;setTool('move');page.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});setStatus(`Page ${pages.length} ajoutée. Passez au stylo pour écrire.`);});
+addPageButton?.addEventListener('click',()=>{const page=addPage([]);activePage=pages.length-1;markActivePage();setTool('move');page.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});setStatus(`Page ${pages.length} ajoutée. Passez au stylo pour écrire.`);});
+deletePageButton?.addEventListener('click',deleteActivePage);
 saveButton?.addEventListener('click',saveWriting);deleteLastButton?.addEventListener('click',()=>deleteLastWriting().catch(console.error));
 boardButton?.addEventListener('click',()=>{studio?.classList.toggle('board-fullscreen');document.body.classList.toggle('writing-board-open',studio?.classList.contains('board-fullscreen'));const span=boardButton.querySelector('span');if(span)span.textContent=studio?.classList.contains('board-fullscreen')?'Réduire':'Grand cahier';setTimeout(resizeAll,80);});
 gallery?.addEventListener('click',e=>{const del=e.target.closest('[data-delete-writing]'),resume=e.target.closest('[data-resume-writing]');if(del)removeWriting(Number(del.dataset.deleteWriting));if(resume)resumeWriting(Number(resume.dataset.resumeWriting));});
