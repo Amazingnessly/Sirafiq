@@ -1,4 +1,4 @@
-import { countSupports, countRecordings, countWritings, listReviewItems, upsertReviewItem } from './db.js?v=71';
+import { countSupports, countRecordings, countWritings, listReviewItems, upsertReviewItem } from './db.js?v=80';
 
 const $ = id => document.getElementById(id);
 const prefersReducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -78,13 +78,13 @@ function sourceIdeas(text){
   const seen=new Set(); return raw.filter(x=>{const k=x.toLocaleLowerCase('fr');if(seen.has(k))return false;seen.add(k);return true;}).slice(0,9);
 }
 function nodeHtml(id,label,parent,kind='branch'){ return `<button class="mind-node ${kind==='root'?'root-node':'branch-node'}" type="button" data-node-id="${id}" data-parent-id="${parent||''}" dir="${/[\u0600-\u06FF]/.test(label)?'rtl':'auto'}">${label}</button>`; }
-function selectMindNode(node){ document.querySelectorAll('.mind-node.selected').forEach(n=>n.classList.remove('selected')); selectedMindNode=node||null; node?.classList.add('selected'); }
+function selectMindNode(node){ document.querySelectorAll('.mind-node.selected').forEach(n=>n.classList.remove('selected')); selectedMindNode=node||null; node?.classList.add('selected'); const editor=$('mindmapNodeLabel'); if(editor){editor.value=node?.textContent?.trim()||'';editor.disabled=!node;} }
 function sceneReset(){ const scene=mapScene(); if(!scene)return; scene.innerHTML='<svg class="mindmap-lines" aria-hidden="true"></svg>'; nodeCounter=0; selectedMindNode=null; }
 function addNode(label,parentId='',kind='branch',x=null,y=null){
   const scene=mapScene(), canvas=mapCanvas(); if(!scene||!canvas)return null;
   const id=`n${++nodeCounter}`; scene.insertAdjacentHTML('beforeend',nodeHtml(id,cleanIdea(label)||'Nouvelle idée',parentId,kind));
   const node=scene.querySelector(`[data-node-id="${id}"]`); const idx=scene.querySelectorAll('.mind-node').length-1;
-  const parentNode=parentId ? scene.querySelector(`[data-node-id=\"${parentId}\"]`) : null; const depth=kind==='root'?0:(Number(parentNode?.dataset.depth||0)+1); node.dataset.depth=String(depth); if(depth>1) node.classList.add('depth-2');
+  const parentNode=parentId ? scene.querySelector(`[data-node-id=\"${parentId}\"]`) : null; const depth=kind==='root'?0:(Number(parentNode?.dataset.depth||0)+1); node.dataset.depth=String(depth); if(depth>1) node.classList.add('depth-2'); const siblings=[...scene.querySelectorAll('.mind-node')].filter(n=>n.dataset.parentId===parentId); const tone=kind==='root'?-1:(parentNode?.dataset.tone ?? String(Math.max(0,(siblings.length-1)%5))); node.dataset.tone=String(tone); if(tone>=0) node.classList.add(`tone-${tone}`);
   node.style.left=`${x ?? (kind==='root'?canvas.clientWidth/2-95:55+(idx%3)*205)}px`; node.style.top=`${y ?? (kind==='root'?canvas.clientHeight/2-38:90+Math.floor(idx/3)*110)}px`;
   makeDraggable(node,canvas); bindNode(node); return node;
 }
@@ -92,34 +92,51 @@ function newManualMap(){ sceneReset(); const root=addNode('Idée centrale','', '
 function renderAutoMap(text){
   const ideas=sourceIdeas(text); if(!ideas.length){$('mindmapSaveStatus').textContent='Ajoutez un texte un peu plus long.';return;}
   sceneReset(); const canvas=mapCanvas(); const root=addNode(ideas[0],'','root',canvas.clientWidth/2-95,canvas.clientHeight/2-38);
-  const branches=ideas.slice(1,8); const rx=Math.min(360,canvas.clientWidth*.34), ry=Math.min(245,canvas.clientHeight*.31);
-  branches.forEach((idea,i)=>{const a=Math.PI*2*i/Math.max(1,branches.length)-Math.PI/2; addNode(idea,root.dataset.nodeId,'branch',canvas.clientWidth/2+Math.cos(a)*rx-90,canvas.clientHeight/2+Math.sin(a)*ry-32);});
-  selectMindNode(root); drawMindmapLines(); $('mindmapSaveStatus').textContent='Structure créée. Tout reste modifiable.';
+  const branchIdeas=ideas.slice(1,Math.min(4,ideas.length)); const branches=branchIdeas.map(idea=>addNode(idea,root.dataset.nodeId,'branch'));
+  ideas.slice(4,10).forEach((idea,i)=>{const parent=branches[i%Math.max(1,branches.length)]||root;addNode(idea,parent.dataset.nodeId,'branch');});
+  selectMindNode(root); layoutMindmap('radial'); $('mindmapSaveStatus').textContent='Structure créée. Tout reste modifiable : déplacez, renommez ou réorganisez les idées.';
 }
 function bindNode(node){
   node.addEventListener('click',e=>{e.stopPropagation();selectMindNode(node);});
   node.addEventListener('dblclick',()=>renameSelected());
 }
-function renameSelected(){ if(!selectedMindNode)return; const next=prompt('Renommer cette idée',selectedMindNode.textContent.trim()); if(next?.trim()){selectedMindNode.textContent=cleanIdea(next,90);selectedMindNode.setAttribute('dir',/[\u0600-\u06FF]/.test(next)?'rtl':'auto');drawMindmapLines();} }
+function renameSelected(){ if(!selectedMindNode)return; const editor=$('mindmapNodeLabel'); const next=editor?.value?.trim(); if(next){selectedMindNode.textContent=cleanIdea(next,100);selectedMindNode.setAttribute('dir',/[\u0600-\u06FF]/.test(next)?'rtl':'auto');drawMindmapLines(); $('mindmapSaveStatus').textContent='Nœud renommé.';} }
 function drawMindmapLines(){
   const canvas=mapCanvas(), scene=mapScene(), svg=scene?.querySelector('.mindmap-lines'); if(!canvas||!scene||!svg)return;
   const cr=canvas.getBoundingClientRect(); svg.setAttribute('viewBox',`0 0 ${canvas.clientWidth} ${canvas.clientHeight}`);
   svg.innerHTML=[...scene.querySelectorAll('.mind-node[data-parent-id]')].filter(n=>n.dataset.parentId).map(node=>{
     const parent=scene.querySelector(`[data-node-id="${node.dataset.parentId}"]`); if(!parent)return'';
     const pr=parent.getBoundingClientRect(), nr=node.getBoundingClientRect(); const x1=pr.left-cr.left+pr.width/2,y1=pr.top-cr.top+pr.height/2,x2=nr.left-cr.left+nr.width/2,y2=nr.top-cr.top+nr.height/2;
-    return `<path d="M ${x1} ${y1} C ${(x1+x2)/2} ${y1}, ${(x1+x2)/2} ${y2}, ${x2} ${y2}"/>`;
+    const tone=node.dataset.tone||'0'; return `<path class="tone-${tone}" d="M ${x1} ${y1} C ${(x1+x2)/2} ${y1}, ${(x1+x2)/2} ${y2}, ${x2} ${y2}"/>`;
   }).join('');
 }
 function makeDraggable(node,canvas){let active=false,dx=0,dy=0;node.addEventListener('pointerdown',e=>{active=true;node.setPointerCapture?.(e.pointerId);const r=node.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;e.preventDefault();});node.addEventListener('pointermove',e=>{if(!active)return;const cr=canvas.getBoundingClientRect();const x=Math.max(8,Math.min(canvas.clientWidth-node.offsetWidth-8,e.clientX-cr.left-dx));const y=Math.max(8,Math.min(canvas.clientHeight-node.offsetHeight-8,e.clientY-cr.top-dy));node.style.left=`${x}px`;node.style.top=`${y}px`;drawMindmapLines();});const stop=()=>active=false;node.addEventListener('pointerup',stop);node.addEventListener('pointercancel',stop);}
+function layoutMindmap(mode='radial'){
+  const canvas=mapCanvas(), scene=mapScene(); if(!canvas||!scene)return;
+  const nodes=[...scene.querySelectorAll('.mind-node')]; const root=scene.querySelector('.root-node'); if(!root)return;
+  document.querySelectorAll('[data-map-layout]').forEach(b=>b.classList.toggle('active',b.dataset.mapLayout===mode));
+  if(mode==='free'){drawMindmapLines();return;}
+  const direct=nodes.filter(n=>n.dataset.parentId===root.dataset.nodeId);
+  const childrenOf=id=>nodes.filter(n=>n.dataset.parentId===id);
+  if(mode==='tree'){
+    root.style.left='36px'; root.style.top=`${Math.max(60,canvas.clientHeight/2-root.offsetHeight/2)}px`;
+    direct.forEach((node,i)=>{const y=70+i*Math.max(110,(canvas.clientHeight-140)/Math.max(1,direct.length));node.style.left=`${Math.min(canvas.clientWidth-210,canvas.clientWidth*.36)}px`;node.style.top=`${Math.min(canvas.clientHeight-80,y)}px`;childrenOf(node.dataset.nodeId).forEach((child,j)=>{child.style.left=`${Math.min(canvas.clientWidth-200,canvas.clientWidth*.69)}px`;child.style.top=`${Math.min(canvas.clientHeight-78,y-35+j*76)}px`;});});
+  } else {
+    root.style.left=`${canvas.clientWidth/2-root.offsetWidth/2}px`;root.style.top=`${canvas.clientHeight/2-root.offsetHeight/2}px`;
+    const rx=Math.min(350,canvas.clientWidth*.34), ry=Math.min(245,canvas.clientHeight*.31);
+    direct.forEach((node,i)=>{const a=Math.PI*2*i/Math.max(1,direct.length)-Math.PI/2;const px=canvas.clientWidth/2+Math.cos(a)*rx-node.offsetWidth/2,py=canvas.clientHeight/2+Math.sin(a)*ry-node.offsetHeight/2;node.style.left=`${Math.max(8,Math.min(canvas.clientWidth-node.offsetWidth-8,px))}px`;node.style.top=`${Math.max(8,Math.min(canvas.clientHeight-node.offsetHeight-8,py))}px`;const kids=childrenOf(node.dataset.nodeId);kids.forEach((child,j)=>{const spread=(j-(kids.length-1)/2)*68;const outerX=canvas.clientWidth/2+Math.cos(a)*(rx+175)-child.offsetWidth/2;const outerY=canvas.clientHeight/2+Math.sin(a)*(ry+120)-child.offsetHeight/2+spread;child.style.left=`${Math.max(8,Math.min(canvas.clientWidth-child.offsetWidth-8,outerX))}px`;child.style.top=`${Math.max(8,Math.min(canvas.clientHeight-child.offsetHeight-8,outerY))}px`;});});
+  }
+  drawMindmapLines();
+}
 function serializeMap(){ return [...mapScene().querySelectorAll('.mind-node')].map(n=>({id:n.dataset.nodeId,parentId:n.dataset.parentId||'',label:n.textContent,left:n.style.left,top:n.style.top,root:n.classList.contains('root-node')})); }
 function saveMap(){ const payload={nodes:serializeMap(),source:$('mindmapSource')?.value||'',mode:mapMode,savedAt:new Date().toISOString()}; localStorage.setItem('sirafiq-mindmap-v7',JSON.stringify(payload)); $('mindmapSaveStatus').textContent='Carte enregistrée localement ✓'; }
 function restoreMap(){ try{const data=JSON.parse(localStorage.getItem('sirafiq-mindmap-v7')||'null');if(!data?.nodes?.length)return false;sceneReset();data.nodes.forEach(item=>{const node=addNode(item.label,item.parentId,item.root?'root':'branch');node.dataset.nodeId=item.id;node.style.left=item.left;node.style.top=item.top;nodeCounter=Math.max(nodeCounter,Number(item.id.replace(/\D/g,''))||0);}); if($('mindmapSource'))$('mindmapSource').value=data.source||''; drawMindmapLines();return true;}catch{return false;} }
 function setMapMode(mode){mapMode=mode;document.querySelectorAll('[data-map-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mapMode===mode));$('mapAutoPanel').hidden=mode!=='auto';$('mapModeHelp').textContent=mode==='auto'?'Collez votre texte : Sirāfiq crée une première structure sans inventer de contenu.':'Commencez par une idée centrale, puis ajoutez des branches et sous-branches.';if(mode==='manual'&&!mapScene()?.querySelector('.mind-node'))newManualMap();}
 document.querySelectorAll('[data-map-mode]').forEach(b=>b.addEventListener('click',()=>setMapMode(b.dataset.mapMode)));
-$('newManualMap')?.addEventListener('click',newManualMap); $('generateMindmap')?.addEventListener('click',()=>renderAutoMap($('mindmapSource')?.value));
+$('newManualMap')?.addEventListener('click',()=>{newManualMap();layoutMindmap('radial');}); $('generateMindmap')?.addEventListener('click',()=>renderAutoMap($('mindmapSource')?.value));
 $('addMindNode')?.addEventListener('click',()=>{if(!mapScene().querySelector('.mind-node'))newManualMap();const root=mapScene().querySelector('.root-node');const node=addNode('Nouvelle branche',root?.dataset.nodeId||'', 'branch');selectMindNode(node);drawMindmapLines();});
 $('addMindChild')?.addEventListener('click',()=>{if(!selectedMindNode){$('mindmapSaveStatus').textContent='Sélectionnez d’abord un nœud.';return;}const node=addNode('Sous-idée',selectedMindNode.dataset.nodeId,'branch',Math.min(mapCanvas().clientWidth-190,selectedMindNode.offsetLeft+190),Math.min(mapCanvas().clientHeight-70,selectedMindNode.offsetTop+95));selectMindNode(node);drawMindmapLines();});
-$('renameMindNode')?.addEventListener('click',renameSelected); $('deleteMindNode')?.addEventListener('click',()=>{if(!selectedMindNode||selectedMindNode.classList.contains('root-node'))return;const id=selectedMindNode.dataset.nodeId;[...mapScene().querySelectorAll(`[data-parent-id="${id}"]`)].forEach(n=>n.dataset.parentId=selectedMindNode.dataset.parentId||'');selectedMindNode.remove();selectedMindNode=null;drawMindmapLines();});
+$('renameMindNode')?.addEventListener('click',renameSelected); $('mindmapNodeLabel')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();renameSelected();}}); document.querySelectorAll('[data-map-layout]').forEach(b=>b.addEventListener('click',()=>layoutMindmap(b.dataset.mapLayout))); $('mindFullscreen')?.addEventListener('click',()=>{document.querySelector('.mindmap-workspace-v7')?.classList.toggle('map-fullscreen');document.body.classList.toggle('mindmap-fullscreen-open');$('mindFullscreen').textContent=document.querySelector('.mindmap-workspace-v7')?.classList.contains('map-fullscreen')?'Réduire':'Plein écran';setTimeout(()=>{layoutMindmap('radial');},80);}); $('deleteMindNode')?.addEventListener('click',()=>{if(!selectedMindNode||selectedMindNode.classList.contains('root-node'))return;const id=selectedMindNode.dataset.nodeId;[...mapScene().querySelectorAll(`[data-parent-id="${id}"]`)].forEach(n=>n.dataset.parentId=selectedMindNode.dataset.parentId||'');selectedMindNode.remove();selectedMindNode=null;drawMindmapLines();});
 $('saveMindmap')?.addEventListener('click',saveMap); $('clearMindmap')?.addEventListener('click',()=>{if(confirm('Réinitialiser la carte actuelle ?')){localStorage.removeItem('sirafiq-mindmap-v7');mapScene().innerHTML='<p class="mindmap-placeholder">Touchez « Nouvelle carte » pour commencer librement.</p>';selectedMindNode=null;}});
 function setMindZoom(v){mindZoom=Math.max(.6,Math.min(1.6,v));mapScene()&&(mapScene().style.transform=`scale(${mindZoom})`);$('mindZoomLabel').textContent=`${Math.round(mindZoom*100)} %`;}
 $('mindZoomIn')?.addEventListener('click',()=>setMindZoom(mindZoom+.1));$('mindZoomOut')?.addEventListener('click',()=>setMindZoom(mindZoom-.1));$('mindCenter')?.addEventListener('click',()=>setMindZoom(1));window.addEventListener('resize',drawMindmapLines);mapCanvas()?.addEventListener('click',()=>selectMindNode(null));

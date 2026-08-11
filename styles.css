@@ -876,3 +876,47 @@ main { padding-bottom: 48px; }
   .recorder-actions { grid-template-columns:1fr 1fr; }
   .review-item { grid-template-columns:auto 1fr; }.review-date{grid-column:2;}
 }
+
+
+/* ===== Sirāfiq v8 — expérience d’apprentissage premium ===== */
+:root{--v8-shadow:0 22px 70px rgba(69,21,37,.085);--v8-border:rgba(113,9,35,.095);--v8-glass:rgba(255,255,255,.86)}
+body{background:radial-gradient(circle at 16% 0%,rgba(245,221,228,.34),transparent 26%),linear-gradient(180deg,#fff 0,#fffafb 58%,#fff 100%)}
+.app-shell{width:min(100%,1180px)}
+.topbar{min-height:calc(66px + var(--safe-top));padding:calc(8px + var(--safe-top)) clamp(18px,3vw,30px) 7px;background:rgba(255,255,255,.90)}
+.brand{min-width:116px}.brand-logo{width:126px}.offline-badge{font-size:.72rem;padding:6px 10px}.icon-button{width:38px;height:38px}
+main{padding:14px clamp(18px,3.2vw,34px) 46px}
+.bottom-nav{bottom:10px;width:min(calc(100% - 30px),900px);min-height:calc(68px + var(--safe-bottom));padding:7px 8px calc(7px + var(--safe-bottom));border:1px solid rgba(113,9,35,.10);border-radius:23px;box-shadow:0 18px 52px rgba(45,24,31,.14);background:rgba(255,255,255,.88)}
+.bottom-nav a{min-height:52px;border-radius:16px;transition:transform .18s ease,background .18s ease,color .18s ease}.bottom-nav a.active{background:linear-gradient(145deg,#f7dfe7,#f7eef1);transform:translateY(-1px)}
+
+/* Accueil : priorité à la séance, sans hero disproportionné */
+@media(min-width:880px){
+ .home-dashboard{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(350px,.96fr);gap:20px 24px;align-items:stretch}
+ .home-hero{grid-column:1;grid-row:1;min-height:410px;padding:28px 26px;grid-template-columns:1fr 130px;border:1px solid var(--v8-border);border-radius:34px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(255,246,249,.90));box-shadow:var(--v8-shadow)}
+ .today-card{grid-column:2;grid-row:1;min-height:410px;padding:26px;display:flex;flex-direction:column;justify-content:center}
+ .learning-worlds,.home-momentum{grid-column:1/-1}
+ .home-hero h1{font-size:clamp(3rem,5.35vw,4.9rem);line-height:.93;margin-bottom:18px}.home-hero p:not(.eyebrow){font-size:1rem;line-height:1.5}
+ .home-orbit{width:128px;align-self:start;margin-top:20px}.home-orbit::after{width:14px;height:14px}
+ .today-topline h2{font-size:clamp(2rem,3vw,2.8rem)}.today-plan{margin:15px 0}.today-plan div{padding:13px}.today-start{margin-top:14px}
+ .coach-focus{margin-top:10px}
+ .world-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+.learning-worlds{margin-top:26px}.learning-worlds .section-heading{margin-bottom:14px}.world-card{min-height:108px;padding:17px 18px;border-radius:25px}.world-glyph{width:48px;height:48px;border-radius:16px}.world-card small{font-size:.78rem}.home-momentum{margin-top:26px}
+
+/* Pages intérieures plus compactes */
+.view:not(#view-accueil) .page-intro{padding:16px 0 14px;max-width:860px}.view:not(#view-accueil) .page-intro h1{font-size:clamp(2.2rem,4.2vw,3.55rem);line-height:1;margin-bottom:10px}.view:not(#view-accueil) .page-intro>p:last-child{font-size:.94rem}.practice-path{margin:12px 0 16px;padding:17px;border-radius:24px}.practice-path h2{font-size:clamp(1.65rem,2.7vw,2.25rem)}
+
+/* Français : densité et matière visibles immédiatement */
+.french-intro h1{font-size:clamp(2.35rem,4.4vw,3.7rem)!important}.french-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.french-stats span{display:flex;align-items:baseline;gap:9px;padding:13px 15px;border:1px solid var(--v8-border);border-radius:18px;background:linear-gradient(145deg,#fff,#fff8fa)}.french-stats strong{font:500 1.55rem/1 Georgia,serif;color:var(--garnet)}.french-stats small{color:var(--muted);font-size:.74rem}.french-skill-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.french-skill-grid button{min-height:104px;padding:16px 17px;border-radius:22px}.french-skill-grid button>span{margin-bottom:13px}.french-exercise-card{padding:24px;border-radius:26px}.french-exercise-card textarea{min-height:150px}
+
+/* Écriture : palette compacte + plusieurs papiers */
+.writing-toolbar-v7{gap:8px;padding:9px 10px;top:68px}.paper-options{display:flex;gap:4px;padding:4px;border:1px solid var(--border);border-radius:14px;background:#fff}.paper-button{min-height:34px;padding:0 8px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:.68rem;font-weight:800}.paper-button.active{background:#f5e5eb;color:var(--garnet)}.writing-board{min-height:720px;background:#fff}.writing-board.paper-lined{background:repeating-linear-gradient(to bottom,#fff 0,#fff 61px,rgba(125,12,43,.065) 62px,#fff 63px)}.writing-board.paper-grid{background-image:linear-gradient(rgba(125,12,43,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(125,12,43,.055) 1px,transparent 1px);background-size:32px 32px}.writing-board.paper-dots{background-image:radial-gradient(circle,rgba(125,12,43,.16) 1px,transparent 1.4px);background-size:24px 24px}.writing-board.paper-blank{background:#fff}#writingCanvas{height:720px;min-height:720px}.writing-studio.board-fullscreen .writing-toolbar-v7{padding-top:max(9px,var(--safe-top));box-shadow:0 8px 32px rgba(44,20,28,.06)}.writing-studio.board-fullscreen .writing-board{height:calc(100vh - 66px)}
+
+/* Cartes mentales : vrai studio créatif */
+.map-mode-switch{margin-bottom:12px}.map-mode{padding:14px 16px;border-radius:19px}.mindmap-workspace-v7{grid-template-columns:minmax(225px,275px) minmax(0,1fr);gap:12px;min-height:calc(100vh - 130px)}.mindmap-workspace-v7 .mindmap-input-panel{padding:16px;border-radius:24px}.map-node-editor{display:grid;gap:6px}.map-node-editor>span{font-size:.7rem;color:var(--muted);font-weight:800}.map-node-editor>div{display:grid;grid-template-columns:1fr auto;gap:6px}.map-node-editor input{min-width:0;height:42px;padding:0 11px;border:1px solid var(--border);border-radius:13px;background:#fff;color:var(--text);font:inherit}.map-node-editor .secondary-button{min-height:42px;padding:0 11px}.mindmap-toolbar{top:68px;display:flex;justify-content:space-between;gap:8px}.map-layout-tools,.map-view-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.mindmap-toolbar button.active{background:var(--garnet);color:#fff;border-color:var(--garnet)}.mindmap-canvas-v7{min-height:760px;border-radius:26px;background:radial-gradient(circle at 50% 48%,rgba(167,15,53,.055),transparent 34%),linear-gradient(rgba(125,12,43,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(125,12,43,.025) 1px,transparent 1px),#fff;background-size:auto,28px 28px,28px 28px,auto}.mind-node{width:172px;min-height:58px;border-radius:18px;font-size:.76rem;box-shadow:0 12px 30px rgba(52,24,34,.10);border-left:4px solid var(--node-accent,#b93b60)}.mind-node.tone-0{--node-accent:#b31b49;background:#fff7fa}.mind-node.tone-1{--node-accent:#6f4a76;background:#fcf8ff}.mind-node.tone-2{--node-accent:#4f7c70;background:#f7fcfa}.mind-node.tone-3{--node-accent:#a66473;background:#fff9fa}.mind-node.tone-4{--node-accent:#80636b;background:#fcfafb}.root-node{width:188px;border-left:0}.mindmap-lines path.tone-0{stroke:#c34a6b}.mindmap-lines path.tone-1{stroke:#8d6b95}.mindmap-lines path.tone-2{stroke:#6e9b8f}.mindmap-lines path.tone-3{stroke:#c28795}.mindmap-lines path.tone-4{stroke:#9b8288}.mindmap-workspace-v7.map-fullscreen{position:fixed;z-index:210;inset:var(--safe-top) 0 0 0;grid-template-columns:250px minmax(0,1fr);padding:10px;background:#fff}.mindmap-workspace-v7.map-fullscreen .mindmap-input-panel{position:relative;top:auto;max-height:calc(100vh - 20px);overflow:auto}.mindmap-workspace-v7.map-fullscreen .mindmap-stage-wrap,.mindmap-workspace-v7.map-fullscreen .mindmap-canvas-v7{min-height:calc(100vh - 80px);height:calc(100vh - 80px)}.mindmap-fullscreen-open{overflow:hidden}
+
+/* Progression plus éditoriale */
+.progress-intro h1{font-size:clamp(2.4rem,4.6vw,3.8rem)!important}.mastery-metric{min-height:132px;padding:17px;border-radius:21px}.mastery-metric strong{margin:12px 0 7px;font-size:2.05rem}.review-queue-card{border-radius:24px}.technical-details{opacity:.82}
+
+@media(max-width:1000px){.world-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mindmap-workspace-v7{grid-template-columns:1fr}.mindmap-workspace-v7 .mindmap-input-panel{position:relative;top:auto}.french-skill-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.bottom-nav{bottom:0;width:100%;border-radius:0;border-left:0;border-right:0}.french-stats{grid-template-columns:1fr}.paper-button{font-size:0;width:34px}.paper-button::before{font-size:.8rem}.paper-button[data-writing-paper="lined"]::before{content:"≡"}.paper-button[data-writing-paper="grid"]::before{content:"▦"}.paper-button[data-writing-paper="dots"]::before{content:"⠿"}.paper-button[data-writing-paper="blank"]::before{content:"□"}.map-layout-tools{width:100%}.mindmap-workspace-v7.map-fullscreen{grid-template-columns:1fr}.mindmap-workspace-v7.map-fullscreen .mindmap-input-panel{display:none}}
+@media(max-width:620px){.world-grid,.french-skill-grid{grid-template-columns:1fr}.mindmap-canvas-v7{min-height:600px}.writing-board,#writingCanvas{height:620px;min-height:620px}}

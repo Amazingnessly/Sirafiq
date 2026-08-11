@@ -1,4 +1,4 @@
-import { addWriting, listWritings, deleteWriting } from './db.js?v=71';
+import { addWriting, listWritings, deleteWriting } from './db.js?v=80';
 
 const $ = id => document.getElementById(id);
 const canvas = $('writingCanvas');
@@ -18,6 +18,18 @@ let ctx = canvas?.getContext('2d') || null;
 let drawing = false, pointerId = null, currentStroke = null, strokes = [], resizeFrame = 0;
 let galleryUrls = [];
 let tool = 'pen', ink = '#7d0c2b', width = 4;
+
+const writingBoard = document.querySelector('.writing-board');
+let paperMode = localStorage.getItem('sirafiq-writing-paper') || 'lined';
+function setPaperMode(mode){
+  paperMode=['lined','grid','dots','blank'].includes(mode)?mode:'lined';
+  if(writingBoard){writingBoard.classList.remove('paper-lined','paper-grid','paper-dots','paper-blank');writingBoard.classList.add(`paper-${paperMode}`);}
+  document.querySelectorAll('[data-writing-paper]').forEach(b=>b.classList.toggle('active',b.dataset.writingPaper===paperMode));
+  localStorage.setItem('sirafiq-writing-paper',paperMode);
+}
+document.querySelectorAll('[data-writing-paper]').forEach(b=>b.addEventListener('click',()=>setPaperMode(b.dataset.writingPaper)));
+setPaperMode(paperMode);
+
 
 const setStatus = message => { if (status) status.textContent = message; };
 const rect = () => canvas?.getBoundingClientRect() || { width: 0, height: 0, left: 0, top: 0 };
