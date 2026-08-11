@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=80">
+  <link rel="stylesheet" href="./styles.css?v=90">
   <title>Sirāfiq</title>
 </head>
 <body>
@@ -37,8 +37,8 @@
           <section class="home-hero">
             <div>
               <p class="eyebrow">Votre séance, sans surcharge</p>
-              <h1 id="homeTitle">Réviser avec envie.<br><span>Progresser avec méthode.</span></h1>
-              <p>Sirāfiq transforme vos supports en actions concrètes : rappeler, prononcer, écrire, relier les idées et revenir au bon moment.</p>
+              <h1 id="homeTitle">Votre savoir, mis en mouvement.<br><span>Une séance prête quand vous l’êtes.</span></h1>
+              <p>Sirāfiq observe vos révisions locales, repère ce qui se fragilise et transforme vos supports en prochaines actions concrètes.</p>
             </div>
             <div class="home-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
           </section>
@@ -61,6 +61,17 @@
             <button class="primary-button today-start" id="startTodaySession" type="button"><span>Commencer ma séance</span><span aria-hidden="true">→</span></button>
           </section>
 
+
+          <section class="knowledge-agent-card" aria-labelledby="agentHomeTitle">
+            <div class="agent-emblem" aria-hidden="true"><span></span><span></span><i></i></div>
+            <div class="agent-copy">
+              <p class="section-kicker">Boussole Sirāfiq · locale</p>
+              <h2 id="agentHomeTitle">Où en êtes-vous, vraiment ?</h2>
+              <p id="agentHomeSummary">Commencez quelques pratiques : Sirāfiq distinguera progressivement ce qui est fragile, acquis ou simplement à entretenir.</p>
+            </div>
+            <button class="secondary-button agent-open" type="button" data-go="progres">Voir mon état d’apprentissage →</button>
+          </section>
+
           <section class="section-block learning-worlds" aria-labelledby="worldsTitle">
             <div class="section-heading split-heading">
               <div><p class="section-kicker">Vos espaces</p><h2 id="worldsTitle">Choisir ce que vous voulez renforcer</h2></div>
@@ -72,7 +83,7 @@
               <button class="world-card world-arabic" type="button" data-focus="vocab"><span class="world-glyph">ع</span><span><strong>Vocabulaire arabe</strong><small>Rappel, sens et consolidation</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-pronounce" type="button" data-go="prononcer"><span class="world-glyph">P</span><span><strong>Prononcer</strong><small>Articulation, prosodie et aisance</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-write" type="button" data-go="ecrire"><span class="world-glyph">É</span><span><strong>Écrire</strong><small>Geste, régularité puis fluidité</small></span><span class="world-arrow">↗</span></button>
-              <button class="world-card world-french" type="button" data-go="francais"><span class="world-glyph">Fr</span><span><strong>Français</strong><small>Lecture, langue et expression</small></span><span class="world-arrow">↗</span></button>
+              <button class="world-card world-french" type="button" data-go="francais"><span class="world-glyph">Fr</span><span><strong>Français oral</strong><small>Prononcer, expliquer, enseigner avec aisance</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-map" type="button" data-go="cartes"><span class="world-glyph">⌘</span><span><strong>Cartes mentales</strong><small>Transformer un texte en structure visuelle</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-library" type="button" data-go="memoriser"><span class="world-glyph">▤</span><span><strong>Bibliothèque</strong><small>Retrouver vos supports locaux</small></span><span class="world-arrow">↗</span></button>
               <button class="world-card world-progress" type="button" data-go="progres"><span class="world-glyph">↗</span><span><strong>Progrès</strong><small>Voir ce qui se consolide vraiment</small></span><span class="world-arrow">↗</span></button>
@@ -108,6 +119,28 @@
   <section class="memory-pathways" aria-label="Parcours de mémorisation">
     <article class="pathway-card" id="quranHub"><div class="pathway-icon">ق</div><div><p class="section-kicker">Qurʾān</p><h2>Mémorisation dédiée</h2><p>Importez votre support dans la catégorie Qurʾān. Le texte source reste inchangé et sert de référence à vos révisions.</p><button class="secondary-button pathway-action" type="button" data-preset-category="Qour’ān">Afficher mes supports Qurʾān</button></div></article>
     <article class="pathway-card" id="vocabHub"><div class="pathway-icon">ع</div><div><p class="section-kicker">Arabe</p><h2>Vocabulaire actif</h2><p>Regroupez vos listes de mots, puis travaillez-les par rappel du sens, production et révision espacée.</p><button class="secondary-button pathway-action" type="button" data-preset-category="Arabe">Afficher mes supports arabes</button></div></article>
+  </section>
+
+
+  <section class="memory-lab" aria-labelledby="memoryLabTitle">
+    <div class="memory-lab-head">
+      <div><p class="section-kicker">Techniques de mémorisation</p><h2 id="memoryLabTitle">Transformer un support en séance.</h2><p>Choisissez un support. Sirāfiq propose une technique adaptée puis programme son retour selon votre maîtrise.</p></div>
+      <label class="memory-support-picker"><span>Support à travailler</span><select id="memorySupportSelect"><option value="">Choisir un support…</option></select></label>
+    </div>
+    <div class="memory-technique-grid" role="list" aria-label="Techniques proposées">
+      <button class="memory-technique active" type="button" data-memory-technique="recall"><span>01</span><strong>Rappel libre</strong><small>Restituer avant de regarder</small></button>
+      <button class="memory-technique" type="button" data-memory-technique="mask"><span>02</span><strong>Masquage progressif</strong><small>Réduire les indices par étapes</small></button>
+      <button class="memory-technique" type="button" data-memory-technique="questions"><span>03</span><strong>Questions</strong><small>Transformer les idées en rappels</small></button>
+      <button class="memory-technique" type="button" data-memory-technique="oral"><span>04</span><strong>Restitution orale</strong><small>Réciter puis vérifier</small></button>
+      <button class="memory-technique" type="button" data-memory-technique="written"><span>05</span><strong>Restitution écrite</strong><small>Réécrire de mémoire</small></button>
+      <button class="memory-technique" type="button" data-memory-technique="map"><span>06</span><strong>Carte de mémoire</strong><small>Reconstruire les relations</small></button>
+    </div>
+    <article class="memory-session-card">
+      <div class="memory-session-main"><p class="section-kicker">Technique recommandée</p><h3 id="memoryTechniqueTitle">Rappel libre + vérification</h3><p id="memoryTechniqueReason">Essayez de retrouver l’essentiel sans consulter le support, puis vérifiez précisément ce qui manquait.</p><div class="memory-support-ideas" id="memorySupportIdeas"><small>Idées proposées pour ce support</small><div><span>Choisissez un support pour obtenir des actions de révision.</span></div></div><ol id="memoryTechniqueSteps"><li>Fermez ou masquez le support.</li><li>Restituez ce dont vous vous souvenez.</li><li>Rouvrez le support et marquez les écarts.</li></ol></div>
+      <div class="memory-session-actions"><button class="primary-button" id="memoryStartTechnique" type="button">Commencer cette technique →</button><button class="secondary-button" id="memorySendToMap" type="button">Ouvrir dans Cartes</button><button class="secondary-button" id="memorySendToWriting" type="button">Restituer par écrit</button></div>
+      <div class="memory-evaluation" id="memoryEvaluation" hidden><small>Après la tentative :</small><div><button data-memory-mastery="again" type="button">À revoir</button><button data-memory-mastery="fragile" type="button">Fragile</button><button data-memory-mastery="acquis" type="button">Acquis</button><button data-memory-mastery="solide" type="button">Maîtrisé</button></div></div>
+      <p class="memory-status" id="memoryStatus" aria-live="polite"></p>
+    </article>
   </section>
 
   <div class="library-toolbar">
@@ -171,22 +204,26 @@
 </section>
 
 <section class="view" id="view-francais" data-view="francais" aria-labelledby="frenchTitle" hidden>
- <div class="page-intro french-intro"><p class="eyebrow">Académie de français</p><h1 id="frenchTitle">Une langue vivante se travaille par petites victoires.</h1><p>Lecture, lexique, orthographe, grammaire et expression : choisissez un niveau, pratiquez, puis indiquez ce qui est acquis. Sirāfiq programme le retour au bon moment.</p></div>
- <section class="french-dashboard">
-  <div class="french-levels" role="tablist" aria-label="Niveau"><button class="lesson-chip active" data-french-level="fondations">Fondations</button><button class="lesson-chip" data-french-level="consolidation">Consolidation</button><button class="lesson-chip" data-french-level="maitrise">Maîtrise</button></div>
-  <div class="french-stats" aria-label="Contenu du parcours français"><span><strong>45</strong><small>exercices guidés</small></span><span><strong>3</strong><small>niveaux progressifs</small></span><span><strong>6</strong><small>domaines de pratique</small></span></div>
-  <div class="french-skill-grid">
-   <button class="active" data-french-skill="lecture"><span>01</span><strong>Lecture</strong><small>Comprendre, inférer, reformuler</small></button><button data-french-skill="vocabulaire"><span>02</span><strong>Vocabulaire</strong><small>Nuancer et réutiliser</small></button><button data-french-skill="orthographe"><span>03</span><strong>Orthographe</strong><small>Observer, mémoriser, corriger</small></button><button data-french-skill="grammaire"><span>04</span><strong>Grammaire</strong><small>Manipuler et comprendre la phrase</small></button><button data-french-skill="expression"><span>05</span><strong>Expression</strong><small>Organiser, écrire, améliorer</small></button><button data-go="prononcer"><span>06</span><strong>Oral</strong><small>Articulation, prosodie, aisance</small></button>
-  </div>
-  <article class="exercise-card french-exercise-card" id="frenchExercise"><div class="exercise-top"><div><p class="section-kicker" id="frenchExerciseMeta">Fondations · Lecture</p><h2 id="frenchExerciseTitle">Lire, puis rappeler l’idée essentielle</h2></div><span class="exercise-number" id="frenchExerciseNumber">1 / 3</span></div><p id="frenchExercisePrompt"></p><textarea id="frenchAnswer" rows="5" placeholder="Répondez ici, sans regarder la correction…"></textarea><div class="exercise-actions"><button class="primary-button" id="checkFrenchExercise" type="button">Voir le corrigé</button><button class="secondary-button" id="nextFrenchExercise" type="button">Exercice suivant</button></div><div id="frenchFeedback" class="exercise-feedback" aria-live="polite"></div><div class="mastery-panel" id="frenchMastery" hidden><small>Après correction, comment était ce rappel ?</small><div><button type="button" data-mastery="again">À revoir</button><button type="button" data-mastery="fragile">Fragile</button><button type="button" data-mastery="acquis">Acquis</button><button type="button" data-mastery="solide">Solide</button></div></div></article>
- </section>
+  <div class="page-intro french-intro oral-intro"><p class="eyebrow">Français oral</p><h1 id="frenchTitle">Parler pour expliquer, naturellement.</h1><p>Objectif : une prononciation claire et naturelle en français de France, avec le rythme, les enchaînements et l’aisance nécessaires pour donner un cours.</p></div>
+  <section class="oral-curriculum" aria-labelledby="oralPathTitle">
+    <div class="practice-path-head"><div><p class="section-kicker">Parcours progressif</p><h2 id="oralPathTitle">Du son isolé au mini-cours.</h2></div><span class="evidence-chip">Écouter · Répéter · Enregistrer · Comparer</span></div>
+    <div class="oral-stage-strip" role="tablist" aria-label="Étapes du parcours oral">
+      <button class="oral-stage active" data-oral-stage="sons" type="button"><span>1</span>Sons</button><button class="oral-stage" data-oral-stage="contrastes" type="button"><span>2</span>Contrastes</button><button class="oral-stage" data-oral-stage="rythme" type="button"><span>3</span>Rythme</button><button class="oral-stage" data-oral-stage="liaisons" type="button"><span>4</span>Enchaînements</button><button class="oral-stage" data-oral-stage="lecture" type="button"><span>5</span>Lecture</button><button class="oral-stage" data-oral-stage="expliquer" type="button"><span>6</span>Expliquer</button><button class="oral-stage" data-oral-stage="aisance" type="button"><span>7</span>Aisance</button>
+    </div>
+    <article class="oral-lesson-card">
+      <div class="oral-lesson-copy"><p class="section-kicker" id="oralLessonMeta">Étape 1 · Sons</p><h2 id="oralLessonTitle">Installer /y/ sans glisser vers /u/.</h2><p id="oralLessonGoal">Travaillez lentement la position des lèvres puis augmentez la longueur de l’énoncé.</p><div class="oral-model-line"><small>Modèle du jour</small><strong id="oralModelText">tu · rue · tu as vu · une rue tranquille</strong></div></div>
+      <div class="oral-lesson-actions"><button class="primary-button" id="playOralModel" type="button">▶ Écouter le modèle</button><button class="secondary-button" id="openPronunciationStudio" type="button">M’enregistrer et comparer →</button></div>
+    </article>
+    <div class="oral-drill-grid" id="oralDrillGrid"></div>
+    <article class="oral-coach-note"><div><p class="section-kicker">Repères d’écoute</p><h3>Ce que Sirāfiq vous demande d’observer</h3></div><ul id="oralCoachChecklist"><li>Le son reste distinct sans exagération.</li><li>Les syllabes non accentuées restent légères.</li><li>Les pauses suivent les groupes de sens.</li></ul></article>
+  </section>
 </section>
 
 <section class="view" id="view-prononcer" data-view="prononcer" aria-labelledby="pronounceTitle" hidden>
   <div class="page-intro">
     <p class="eyebrow">Prononcer</p>
-    <h1 id="pronounceTitle">Enregistrer, réécouter, recommencer.</h1>
-    <p>Le microphone est utilisé uniquement pendant vos prises. Les enregistrements que vous choisissez de conserver restent dans le stockage local de cet appareil.</p>
+    <h1 id="pronounceTitle">Écouter. Répéter. Comparer. Affiner.</h1>
+    <p>Travaillez à partir d’un modèle vocal, enregistrez-vous, puis comparez. Sirāfiq ne prétend pas noter automatiquement un accent : il vous donne des repères précis et conserve vos prises localement.</p>
   </div>
   <section class="practice-path" aria-labelledby="pronunciationPathTitle">
     <div class="practice-path-head"><div><p class="section-kicker">Parcours français</p><h2 id="pronunciationPathTitle">De l’articulation à l’aisance</h2></div><span class="evidence-chip">Articulation · Prosodie · Intelligibilité</span></div>
@@ -199,6 +236,13 @@
     </div>
     <div class="practice-prompt-card"><div class="prompt-pulse" aria-hidden="true"></div><div><small>À prononcer</small><strong id="pronunciationPrompt">Tu — tout — rue — roue</strong><p id="pronunciationTip">Distinguez /y/ et /u/. Cherchez d’abord une différence nette et intelligible, sans accélérer.</p></div></div>
   </section>
+
+  <section class="pronunciation-compare" aria-labelledby="compareTitle">
+    <div class="compare-head"><div><p class="section-kicker">Comparateur</p><h2 id="compareTitle">Modèle ↔ votre prise</h2></div><span class="evidence-chip">Aucun jugement automatique fictif</span></div>
+    <div class="compare-grid"><article><small>Modèle vocal de l’appareil</small><strong id="compareModelText">Tu — tout — rue — roue</strong><button class="secondary-button" id="playPronunciationModel" type="button">▶ Écouter</button></article><article><small>Votre dernière prise</small><strong id="compareTakeState">Aucune prise prête</strong><button class="secondary-button" id="playCurrentTake" type="button" disabled>▶ Réécouter ma prise</button></article></div>
+    <div class="pronunciation-observation"><strong>À comparer</strong><div id="pronunciationObservation">Position des lèvres, netteté de /y/ et /u/, stabilité du rythme. Réécoutez alternativement le modèle et votre prise.</div></div>
+  </section>
+
   <section class="recorder-card" aria-labelledby="recorderTitle">
     <div class="recorder-head"><div><p class="section-kicker">Enregistreur local</p><h2 id="recorderTitle">Nouvelle prise</h2></div><strong class="record-timer" id="recordTimer">00:00</strong></div>
     <label class="record-title-field"><span>Titre</span><input id="recordTitle" type="text" maxlength="160" placeholder="Ex. Lecture du passage 1"></label>
@@ -220,44 +264,28 @@
 
       
 <section class="view" id="view-ecrire" data-view="ecrire" aria-labelledby="writeTitle" hidden>
-  <div class="page-intro">
-    <p class="eyebrow">Écrire</p>
-    <h1 id="writeTitle">Écrire au doigt ou au stylet.</h1>
-    <p>Tracez librement sur la surface ci-dessous. Les traits restent uniquement sur cet appareil.</p>
-  </div>
+  <div class="page-intro writing-intro"><p class="eyebrow">Écrire</p><h1 id="writeTitle">Maîtriser le geste, puis écrire librement.</h1><p>Deux parcours distincts pour améliorer le tracé français et arabe. Le grand cahier reste disponible pour vos restitutions, notes et paragraphes.</p></div>
 
-  <section class="practice-path writing-path" aria-labelledby="writingPathTitle">
-    <div class="practice-path-head"><div><p class="section-kicker">Parcours français</p><h2 id="writingPathTitle">Du geste maîtrisé à l’écriture fluide</h2></div><span class="evidence-chip">Forme · Liaison · Régularité · Fluidité</span></div>
-    <div class="lesson-strip" id="writingLessons">
-      <button type="button" class="lesson-chip active" data-writing-lesson="gestes">1 · Gestes</button>
-      <button type="button" class="lesson-chip" data-writing-lesson="lettres">2 · Lettres</button>
-      <button type="button" class="lesson-chip" data-writing-lesson="liaisons">3 · Liaisons</button>
-      <button type="button" class="lesson-chip" data-writing-lesson="mots">4 · Mots</button>
-      <button type="button" class="lesson-chip" data-writing-lesson="phrases">5 · Phrases</button>
-      <button type="button" class="lesson-chip" data-writing-lesson="fluidite">6 · Fluidité</button>
-    </div>
-    <div class="writing-guide"><div><small>Exercice guidé</small><strong id="writingPracticePrompt">Boucles régulières : 𝓁 𝓁 𝓁</strong><p id="writingPracticeTip">Gardez une hauteur stable et un mouvement continu. Cherchez la régularité avant la vitesse.</p></div><div class="guide-rhythm" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
+  <section class="writing-coach" aria-labelledby="writingPathTitle">
+    <div class="practice-path-head"><div><p class="section-kicker">Entraînement quotidien</p><h2 id="writingPathTitle">Votre séance de geste.</h2></div><div class="writing-language-tabs" role="tablist"><button class="active" type="button" data-writing-language="fr">Français</button><button type="button" data-writing-language="ar">العربية</button></div></div>
+    <div class="lesson-strip" id="writingLessons"><button type="button" class="lesson-chip active" data-writing-lesson="gestes">1 · Gestes</button><button type="button" class="lesson-chip" data-writing-lesson="familles">2 · Familles</button><button type="button" class="lesson-chip" data-writing-lesson="liaisons">3 · Liaisons</button><button type="button" class="lesson-chip" data-writing-lesson="mots">4 · Mots</button><button type="button" class="lesson-chip" data-writing-lesson="lignes">5 · Lignes</button><button type="button" class="lesson-chip" data-writing-lesson="fluidite">6 · Fluidité</button></div>
+    <article class="writing-daily-card"><div class="writing-model-panel"><p class="section-kicker" id="writingDailyMeta">Français · Jour du geste</p><h3 id="writingPracticePrompt">Boucles régulières et continues</h3><p id="writingPracticeTip">Cherchez une hauteur stable avant la vitesse.</p><svg id="writingGestureModel" class="writing-gesture-model" viewBox="0 0 620 150" role="img" aria-label="Modèle vectoriel du geste"><path d="M35 105 C55 25 95 25 105 105 C115 135 145 130 150 82 C158 25 200 24 210 103 C220 135 250 129 257 80 C266 25 309 24 318 104 C327 133 359 128 365 78"/><path d="M35 118 H585" class="guide-baseline"/></svg></div><ol id="writingDailySteps"><li>Observer le mouvement.</li><li>Repasser lentement 3 fois.</li><li>Copier 2 lignes.</li><li>Écrire seul sans modèle.</li></ol></article>
   </section>
 
   <section class="writing-studio" id="writingStudio">
-    <div class="writing-toolbar writing-toolbar-v7" aria-label="Outils d’écriture">
-      <div class="tool-cluster"><button class="tool-button active" id="penTool" type="button" title="Stylo">✎ <span>Stylo</span></button><button class="tool-button" id="highlighterTool" type="button" title="Surligneur">▰ <span>Surligneur</span></button><button class="tool-button" id="eraserTool" type="button" title="Gomme">⌫ <span>Gomme</span></button></div>
+    <div class="writing-toolbar writing-toolbar-v9" aria-label="Outils d’écriture">
+      <div class="tool-cluster"><button class="tool-button active" id="penTool" type="button">✎ <span>Stylo</span></button><button class="tool-button" id="highlighterTool" type="button">▰ <span>Surligneur</span></button><button class="tool-button" id="eraserTool" type="button">⌫ <span>Gomme</span></button><button class="tool-button" id="moveTool" type="button">☝ <span>Déplacer</span></button></div>
       <div class="color-palette" aria-label="Couleur du stylo"><button class="ink-dot active" data-ink="#7d0c2b" style="--ink:#7d0c2b" aria-label="Bordeaux"></button><button class="ink-dot" data-ink="#16151a" style="--ink:#16151a" aria-label="Noir"></button><button class="ink-dot" data-ink="#2458a6" style="--ink:#2458a6" aria-label="Bleu"></button><button class="ink-dot" data-ink="#278060" style="--ink:#278060" aria-label="Vert"></button><button class="ink-dot" data-ink="#9a4a9b" style="--ink:#9a4a9b" aria-label="Prune"></button></div>
-      <div class="stroke-sizes" aria-label="Épaisseur"><button class="stroke-size" data-width="2" aria-label="Fin">•</button><button class="stroke-size active" data-width="4" aria-label="Moyen">●</button><button class="stroke-size" data-width="8" aria-label="Large">⬤</button></div>
-      <div class="paper-options" aria-label="Fond du tableau"><button class="paper-button active" type="button" data-writing-paper="lined" title="Lignes">Lignes</button><button class="paper-button" type="button" data-writing-paper="grid" title="Quadrillage">Grille</button><button class="paper-button" type="button" data-writing-paper="dots" title="Pointillé">Points</button><button class="paper-button" type="button" data-writing-paper="blank" title="Blanc">Blanc</button></div>
-      <div class="tool-cluster utility-tools"><button class="tool-button danger-tool" id="clearWriting" type="button" title="Effacer le tableau actuel">🗑 <span>Effacer</span></button><button class="tool-button" id="undoWriting" type="button">↶ <span>Annuler</span></button><button class="tool-button" id="toggleWritingBoard" type="button">⛶ <span>Grand tableau</span></button></div>
-      <div class="tool-cluster save-tools"><button class="secondary-button danger-action" id="deleteLastWriting" type="button">Supprimer le dernier</button><button class="primary-button" id="saveWriting" type="button">Enregistrer</button></div>
+      <div class="stroke-sizes"><button class="stroke-size" data-width="2" aria-label="Fin">•</button><button class="stroke-size active" data-width="4" aria-label="Moyen">●</button><button class="stroke-size" data-width="8" aria-label="Large">⬤</button></div>
+      <div class="paper-options"><button class="paper-button active" type="button" data-writing-paper="lined">Lignes</button><button class="paper-button" type="button" data-writing-paper="grid">Grille</button><button class="paper-button" type="button" data-writing-paper="dots">Points</button><button class="paper-button" type="button" data-writing-paper="blank">Blanc</button></div>
+      <div class="tool-cluster utility-tools"><button class="tool-button danger-tool" id="clearWriting" type="button">🗑 <span>Vider</span></button><button class="tool-button" id="undoWriting" type="button">↶ <span>Annuler</span></button><button class="tool-button" id="addWritingPage" type="button">＋ <span>Page</span></button><button class="tool-button" id="toggleWritingBoard" type="button">⛶ <span>Grand cahier</span></button></div>
+      <div class="tool-cluster save-tools"><button class="secondary-button danger-action" id="deleteLastWriting" type="button">Supprimer le dernier</button><button class="primary-button" id="saveWriting" type="button">Enregistrer le cahier</button></div>
     </div>
-    <div class="writing-surface writing-board"><canvas id="writingCanvas" aria-label="Grand tableau d’écriture tactile"></canvas></div>
+    <div class="writing-notebook-scroll" id="writingNotebookScroll"><div class="writing-notebook" id="writingNotebook"><article class="writing-page paper-lined" data-writing-page="0"><span class="page-number">1</span><canvas id="writingCanvas" data-writing-canvas="0" aria-label="Page 1 du cahier tactile"></canvas></article></div></div>
   </section>
-
   <p class="diagnostic-note inline-note" id="writingStatus" aria-live="polite"></p>
-  <section class="section-block" aria-labelledby="writingGalleryTitle">
-    <div class="section-heading"><div><p class="section-kicker">Tracés locaux</p><h2 id="writingGalleryTitle">Tracés enregistrés</h2></div></div>
-    <div class="writing-gallery" id="writingGallery" aria-live="polite"></div>
-  </section>
+  <section class="section-block" aria-labelledby="writingGalleryTitle"><div class="section-heading"><div><p class="section-kicker">Cahiers locaux</p><h2 id="writingGalleryTitle">Travaux enregistrés</h2></div></div><div class="writing-gallery" id="writingGallery" aria-live="polite"></div></section>
 </section>
-
 
       <section class="view" id="view-progres" data-view="progres" aria-labelledby="progressTitle" hidden>
   <div class="page-intro progress-intro">
@@ -268,6 +296,9 @@
 
   <section class="progress-learning" aria-labelledby="learningProgressTitle">
     <div class="section-heading progress-heading"><div><p class="section-kicker">Maîtrise</p><h2 id="learningProgressTitle">Votre mémoire en mouvement</h2></div><p class="section-aside">Les états évoluent à partir de vos auto-évaluations et des prochaines dates de révision.</p></div>
+
+    <article class="learning-agent-diagnostic" aria-labelledby="agentProgressTitle"><div class="agent-emblem large" aria-hidden="true"><span></span><span></span><i></i></div><div><p class="section-kicker">Agent d’apprentissage local</p><h2 id="agentProgressTitle">Ce que Sirāfiq comprend de votre progression</h2><p id="agentProgressSummary">Pas encore assez de données. Après quelques séances, Sirāfiq expliquera ce qui est fragile, ce qui se consolide et ce qui doit revenir aujourd’hui.</p><div class="agent-recommendations" id="agentRecommendations"></div></div><button class="primary-button compact-progress-action" id="agentStartRecommendation" type="button">Travailler la priorité →</button></article>
+
     <div class="mastery-metrics">
       <article class="mastery-metric urgent"><span>À revoir</span><strong id="reviewDueMetric">0</strong><small>à échéance maintenant</small></article>
       <article class="mastery-metric fragile"><span>Fragile</span><strong id="reviewFragileMetric">0</strong><small>à renforcer bientôt</small></article>
@@ -332,7 +363,7 @@
 
   <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./app.js?v=80"></script>
+  <script type="module" src="./app.js?v=90"></script>
 
 <input id="filePicker"
        type="file"
@@ -423,9 +454,9 @@
   <div class="support-viewer-body" id="supportViewerBody"></div>
 </dialog>
 
-  <script type="module" src="./lot1.js?v=80"></script>
-  <script type="module" src="./writing.js?v=80"></script>
-  <script type="module" src="./pronunciation.js?v=80"></script>
-  <script type="module" src="./learning.js?v=80"></script>
+  <script type="module" src="./lot1.js?v=90"></script>
+  <script type="module" src="./writing.js?v=90"></script>
+  <script type="module" src="./pronunciation.js?v=90"></script>
+  <script type="module" src="./learning.js?v=90"></script>
 </body>
 </html>

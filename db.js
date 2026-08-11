@@ -1,11 +1,12 @@
 const DB_NAME = 'sirafiq-local';
-const DB_VERSION = 5;
+const DB_VERSION = 6;
 const STORE_META = 'meta';
 const STORE_DIAGNOSTICS = 'diagnostics';
 const STORE_SUPPORTS = 'supports';
 const STORE_RECORDINGS = 'recordings';
 const STORE_WRITINGS = 'writings';
 const STORE_REVIEWS = 'reviews';
+const STORE_EVENTS = 'learningEvents';
 
 function ensureIndex(store, name, keyPath) {
   if (!store.indexNames.contains(name)) store.createIndex(name, keyPath);
@@ -49,6 +50,14 @@ function openDb() {
       ensureIndex(reviews, 'nextReview', 'nextReview');
       ensureIndex(reviews, 'domain', 'domain');
       ensureIndex(reviews, 'mastery', 'mastery');
+
+
+      let events = db.objectStoreNames.contains(STORE_EVENTS)
+        ? request.transaction.objectStore(STORE_EVENTS)
+        : db.createObjectStore(STORE_EVENTS, { keyPath: 'id', autoIncrement: true });
+      ensureIndex(events, 'createdAt', 'createdAt');
+      ensureIndex(events, 'domain', 'domain');
+      ensureIndex(events, 'kind', 'kind');
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error || new Error('IndexedDB indisponible'));
@@ -134,3 +143,12 @@ export function upsertReviewItem(record) {
 export function listReviewItems() { return runRequest(STORE_REVIEWS, 'readonly', s => s.getAll()); }
 export function getReviewItem(key) { return runRequest(STORE_REVIEWS, 'readonly', s => s.get(String(key))); }
 export function deleteReviewItem(key) { return runRequest(STORE_REVIEWS, 'readwrite', s => s.delete(String(key))); }
+
+
+export function addLearningEvent(record) {
+  const now = new Date().toISOString();
+  return runRequest(STORE_EVENTS, 'readwrite', s => s.add({ ...record, createdAt: record?.createdAt || now }));
+}
+export function listLearningEvents() { return runRequest(STORE_EVENTS, 'readonly', s => s.getAll()); }
+export function countLearningEvents() { return runRequest(STORE_EVENTS, 'readonly', s => s.count()); }
+export function clearLearningEvents() { return runRequest(STORE_EVENTS, 'readwrite', s => s.clear()); }
