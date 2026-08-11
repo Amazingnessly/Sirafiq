@@ -1,0 +1,24 @@
+Sirāfiq — stabilisation v2
+
+Contrôles passés :
+- Syntaxe app.js : OK
+- Syntaxe db.js : OK
+- Syntaxe lot1.js : OK
+- Syntaxe writing.js : OK
+- Syntaxe pronunciation.js : OK
+- Syntaxe sw.js : OK
+- 5 vues principales présentes : OK
+- IDs HTML dupliqués : aucun
+- Références DOM critiques manquantes : aucune
+- Pointer Events écriture : présents
+- getUserMedia / MediaRecorder : présents
+- Ressources déclarées dans le cache PWA : présentes
+- Test UI automatisé navigation : PASS
+- Test UI automatisé diagnostic : PASS
+- Test UI automatisé import + aperçu : PASS
+- Test UI automatisé écriture + sauvegarde : PASS
+- Test UI automatisé audio simulé + sauvegarde : PASS
+- Test UI automatisé compteurs Progrès : PASS
+- Overflow horizontal 390 / 768 / 1024 px : aucun sur les 5 vues
+
+Limite du banc de test : l’accès au matériel réel (microphone et stylet de l’iPad) doit être confirmé sur l’iPad après déploiement.
