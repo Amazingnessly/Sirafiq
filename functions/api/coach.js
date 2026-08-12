@@ -7,7 +7,6 @@ Réponds en JSON strict avec: title (court), reason (2 phrases max), steps (3 à
 Données: ${JSON.stringify(data).slice(0,14000)}`;
   const out = await env.AI.run('@cf/meta/llama-3.2-3b-instruct', { messages: [{ role: 'user', content: prompt }], max_tokens: 700, temperature: 0.25 });
   const raw = out?.response || out?.result?.response || '';
-  let parsed; try { parsed = JSON.parse(String(raw).replace(/^```json\s*|\s*```$/g,'')); } catch { parsed = { title: 'Séance proposée par l’IA', reason: 'Plan généré à partir de vos données actuelles.', steps: String(raw).split(/
-+/).filter(Boolean).slice(0,5) }; }
+  let parsed; try { parsed = JSON.parse(String(raw).replace(/^```json\s*|\s*```$/g,'')); } catch { parsed = { title: 'Séance proposée par l’IA', reason: 'Plan généré à partir de vos données actuelles.', steps: String(raw).split(/\r?\n+/).filter(Boolean).slice(0,5) }; }
   return Response.json(parsed, { headers: { 'cache-control': 'no-store' } });
 }
