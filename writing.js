@@ -1,4 +1,4 @@
-import { addWriting, listWritings, deleteWriting, addLearningEvent } from './db.js?v=111';
+import { addWriting, listWritings, deleteWriting, addLearningEvent } from './db.js?v=120';
 
 const $=id=>document.getElementById(id);
 const notebook=$('writingNotebook'), scroll=$('writingNotebookScroll'), studio=$('writingStudio');

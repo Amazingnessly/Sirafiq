@@ -1,7 +1,7 @@
 import {
   addDiagnostic, clearDiagnostics, listDiagnostics, testIndexedDbAvailability, writeLocalProbe,
   countSupports, countRecordings, countWritings
-} from './db.js?v=111';
+} from './db.js?v=120';
 
 const views = [...document.querySelectorAll('[data-view]')];
 const navItems = [...document.querySelectorAll('[data-nav]')];
@@ -171,7 +171,7 @@ function closeDialog() {
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   try {
-    await navigator.serviceWorker.register('./sw.js?v=111', { scope: './', updateViaCache: 'none' });
+    await navigator.serviceWorker.register('./sw.js?v=120', { scope: './', updateViaCache: 'none' });
   } catch (error) {
     console.warn('Service worker non enregistré', error);
   }

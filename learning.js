@@ -3,8 +3,8 @@ import {
   listSupports, getSupport,
   listReviewItems, upsertReviewItem,
   addLearningEvent, listLearningEvents
-} from './db.js?v=111';
-import { createMindMapModel } from './mindmap-engine.js?v=111';
+} from './db.js?v=120';
+import { createMindMapModel } from './mindmap-engine.js?v=120';
 
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
@@ -307,8 +307,8 @@ let currentOralStage='sons';
 function speakFrench(text){
   if(!('speechSynthesis' in window)){return false;}
   speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(String(text).replace(/·/g,',').replace(/\//g,',')); u.lang='fr-FR'; u.rate=.86; u.pitch=1;
-  const voices=speechSynthesis.getVoices(); const fr=voices.find(v=>/^fr[-_]?FR/i.test(v.lang))||voices.find(v=>/^fr/i.test(v.lang)); if(fr)u.voice=fr;
+  const u=new SpeechSynthesisUtterance(String(text).replace(/·/g,',').replace(/\//g,',')); u.lang='fr-FR'; u.rate=Number(localStorage.getItem('sirafiq-model-rate')||0.88); u.pitch=1;
+  const voices=speechSynthesis.getVoices(); const wanted=localStorage.getItem('sirafiq-model-voice')||''; const fr=voices.find(v=>v.name===wanted)||voices.find(v=>/^fr[-_]?FR/i.test(v.lang)&&/premium|enhanced|thomas|audrey|amelie|amélie|aurelie|aurélie/i.test(v.name))||voices.find(v=>/^fr[-_]?FR/i.test(v.lang))||voices.find(v=>/^fr/i.test(v.lang)); if(fr)u.voice=fr;
   speechSynthesis.speak(u); return true;
 }
 function renderOralStage(stage=currentOralStage){
@@ -774,3 +774,11 @@ window.addEventListener('sirafiq:review-support',async event=>{
 window.addEventListener('sirafiq:data-changed',()=>{refreshHomeMetrics();refreshLearningProgress();refreshMemorySupportPicker();});
 window.addEventListener('hashchange',()=>{if(location.hash==='#memoriser')refreshMemorySupportPicker();});
 refreshHomeMetrics();refreshLearningProgress();
+\n\n// ===== Conseiller IA v12 (Workers AI optionnel, fallback local) =====
+async function populateAiSupports(){const sel=$('aiSupport');if(!sel)return;try{const supports=await listSupports();sel.innerHTML='<option value="">Aucun support précis</option>'+supports.map(x=>`<option value="${x.id}">${esc(x.title||'Support')} · ${esc(x.category||'Autre')}</option>`).join('');}catch{}}
+async function extractSupportTextForAi(id){if(!id)return '';const support=await getSupport(Number(id));if(!support?.blob)return '';const type=String(support.mimeType||support.blob.type||'').toLowerCase();if(type.startsWith('text/')||/json|xml|csv|markdown/.test(type)){return (await support.blob.text()).slice(0,28000);}
+ if(type.includes('pdf')&&window.pdfjsLib?.getDocument){const data=await support.blob.arrayBuffer();const pdf=await window.pdfjsLib.getDocument({data}).promise;let out='';const max=Math.min(pdf.numPages,12);for(let i=1;i<=max&&out.length<28000;i++){const page=await pdf.getPage(i);const content=await page.getTextContent();out+=`\
+[Page ${i}] `+content.items.map(x=>x.str).join(' ');}return out.slice(0,28000);}
+ return ''; }
+\nfunction localCoachAnswer(goal='organiser', minutes=20, question=''){\n  const d=latestAgentData||{supports:[],due:[],fragile:[],untouched:[]};\n  const priority=d.due?.[0]||d.fragile?.[0]||d.untouched?.[0]||d.supports?.[0];\n  const blocks=[];\n  if(priority) blocks.push(`1. ${priority.title||'Support prioritaire'} — rappel actif sans regarder, puis vérification (${Math.max(5,Math.round(minutes*.45))} min).`);\n  if(goal==='oral'||goal==='cours'||goal==='organiser') blocks.push(`2. Oral français — écoute, imitation, enregistrement, comparaison puis mini-explication (${Math.max(5,Math.round(minutes*.3))} min).`);\n  if(goal==='ecriture'||goal==='organiser') blocks.push(`3. Écriture — geste ciblé puis une ligne libre (${Math.max(4,Math.round(minutes*.25))} min).`);\n  if(!blocks.length) blocks.push('1. Importez ou choisissez un support, puis faites une première restitution sans regarder.');\n  return {title:'Plan préparé localement',reason:question?`Objectif pris en compte : ${question}`:'Priorités construites à partir de vos données locales et des échéances.',steps:blocks};\n}\nfunction renderCoachAnswer(data,mode='local'){const box=$('aiAnswer');if(!box)return;box.innerHTML=`<div class="ai-answer-head"><span>${mode==='ai'?'✦ IA':'⌖ Local'}</span><div><strong>${esc(data.title||'Séance proposée')}</strong><small>${esc(data.reason||'')}</small></div></div><ol>${(data.steps||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`;}\nasync function askCoach(useAI=true){const goal=$('aiGoal')?.value||'organiser',minutes=Number($('aiMinutes')?.value||20),question=$('aiQuestion')?.value.trim()||'';const state=$('aiState');if(!useAI){renderCoachAnswer(localCoachAnswer(goal,minutes,question),'local');if(state)state.textContent='Mode local';return;}try{if(state)state.textContent='IA en réflexion…';const selectedId=$('aiSupport')?.value||'';let supportText='';if(selectedId&&$('aiSupportConsent')?.checked){if(state)state.textContent='Lecture du support…';supportText=await extractSupportTextForAi(selectedId);}const context={goal,minutes,question,selectedSupportId:selectedId,supportText,supports:(latestAgentData.supports||[]).map(x=>({id:x.id,title:x.title,category:x.category,kind:x.kind})).slice(0,40),due:(latestAgentData.due||[]).slice(0,12),fragile:(latestAgentData.fragile||[]).slice(0,12),untouched:(latestAgentData.untouched||[]).map(x=>({id:x.id,title:x.title,category:x.category})).slice(0,12)};const r=await fetch('/api/coach',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(context)});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).error||'IA indisponible');const data=await r.json();renderCoachAnswer(data,'ai');if(state)state.textContent='Workers AI actif';}catch(err){console.warn(err);renderCoachAnswer(localCoachAnswer(goal,minutes,question),'local');if(state)state.textContent='Mode local · IA non activée';}}\n$('askAiCoach')?.addEventListener('click',()=>askCoach(true));\n$('useLocalCoach')?.addEventListener('click',()=>askCoach(false));\n
+populateAiSupports();window.addEventListener('sirafiq:data-changed',populateAiSupports);

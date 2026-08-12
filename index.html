@@ -11,10 +11,10 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./styles.css?v=111">
+  <link rel="stylesheet" href="./styles.css?v=120">
   <title>Sirāfiq</title>
 </head>
-<body>
+<body class="knowledge-parchment">
   <div class="ambient ambient-one" aria-hidden="true"></div>
   <div class="ambient ambient-two" aria-hidden="true"></div>
 
@@ -37,7 +37,7 @@
           <section class="home-hero">
             <div>
               <p class="eyebrow">Votre séance, sans surcharge</p>
-              <h1 id="homeTitle">Votre savoir, mis en mouvement.<br><span>Une séance prête quand vous l’êtes.</span></h1>
+              <h1 id="homeTitle">Votre savoir devient un chemin.<br><span>Sirāfiq prépare la prochaine étape.</span></h1>
               <p>Sirāfiq observe vos révisions locales, repère ce qui se fragilise et transforme vos supports en prochaines actions concrètes.</p>
             </div>
             <div class="home-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -266,6 +266,12 @@
     <div class="practice-prompt-card"><div class="prompt-pulse" aria-hidden="true"></div><div><small>À prononcer</small><strong id="pronunciationPrompt">Tu — tout — rue — roue</strong><p id="pronunciationTip">Distinguez /y/ et /u/. Cherchez d’abord une différence nette et intelligible, sans accélérer.</p></div></div>
   </section>
 
+  <section class="voice-lab parchment-panel" aria-labelledby="voiceLabTitle">
+    <div><p class="section-kicker">Voix modèle</p><h2 id="voiceLabTitle">Choisissez une voix que vous avez envie d’imiter.</h2><p>Sirāfiq privilégie une voix IA française naturelle lorsqu’elle est activée sur Cloudflare. Sinon, choisissez une voix française installée sur l’iPad.</p></div>
+    <div class="voice-lab-controls"><label><span>Voix système</span><select id="modelVoiceSelect"><option value="">Automatique</option></select></label><label><span>Débit</span><input id="modelVoiceRate" type="range" min="0.72" max="1.04" value="0.88" step="0.02"></label><button class="secondary-button" id="previewSelectedVoice" type="button">Écouter cette voix</button><button class="primary-button ai-voice-button" id="playAiModelVoice" type="button">Voix IA française ✦</button></div>
+    <p class="voice-status" id="modelVoiceStatus">La voix IA nécessite l’activation de Workers AI ; la voix système reste disponible immédiatement.</p>
+  </section>
+
   <section class="pronunciation-compare" aria-labelledby="compareTitle">
     <div class="compare-head"><div><p class="section-kicker">Comparateur</p><h2 id="compareTitle">Modèle ↔ votre prise</h2></div><span class="evidence-chip">Aucun jugement automatique fictif</span></div>
     <div class="compare-grid"><article><small>Modèle vocal de l’appareil</small><strong id="compareModelText">Tu — tout — rue — roue</strong><button class="secondary-button" id="playPronunciationModel" type="button">▶ Écouter</button></article><article><small>Votre dernière prise</small><strong id="compareTakeState">Aucune prise prête</strong><button class="secondary-button" id="playCurrentTake" type="button" disabled>▶ Réécouter ma prise</button></article></div>
@@ -348,6 +354,27 @@
     <div class="section-heading progress-heading"><div><p class="section-kicker">Maîtrise</p><h2 id="learningProgressTitle">Votre mémoire en mouvement</h2></div><p class="section-aside">Les états évoluent à partir de vos auto-évaluations et des prochaines dates de révision.</p></div>
 
     <article class="learning-agent-diagnostic boussole-v11" aria-labelledby="agentProgressTitle"><div class="agent-emblem large" aria-hidden="true"><span></span><span></span><i></i></div><div class="boussole-copy"><p class="section-kicker">Boussole Sirāfiq · agent local</p><h2 id="agentProgressTitle">Votre tableau de bord d’apprentissage</h2><p id="agentProgressSummary">Sirāfiq analyse vos pratiques locales pour décider ce qui doit revenir, ce qui peut attendre et quel support mérite d’être activé.</p><div class="agent-recommendations" id="agentRecommendations"></div></div><button class="primary-button compact-progress-action" id="agentStartRecommendation" type="button">Travailler la priorité →</button></article>
+
+    <section class="ai-council parchment-panel" aria-labelledby="aiCouncilTitle">
+      <div class="ai-council-head">
+        <div>
+          <p class="section-kicker">Conseiller IA · optionnel</p>
+          <h2 id="aiCouncilTitle">Un tuteur qui transforme vos données en décisions.</h2>
+          <p>Il peut proposer une séance, choisir une technique de rappel, prioriser vos supports et expliquer pourquoi. Sans connexion IA, la Boussole locale continue de fonctionner.</p>
+        </div>
+        <span class="ai-state" id="aiState">Mode local</span>
+      </div>
+      <div class="ai-council-grid">
+        <label><span>Mon objectif maintenant</span><select id="aiGoal"><option value="organiser">Organiser mes révisions</option><option value="memoriser">Mémoriser un support</option><option value="oral">Améliorer mon français oral</option><option value="ecriture">Améliorer mon tracé</option><option value="cours">Préparer une prise de parole / un cours</option></select></label>
+        <label><span>Temps disponible</span><select id="aiMinutes"><option>10</option><option selected>20</option><option>30</option><option>45</option><option>60</option></select></label>
+        <label class="ai-support-choice"><span>Support à exploiter</span><select id="aiSupport"><option value="">Aucun support précis</option></select></label>
+        <label class="ai-consent"><input id="aiSupportConsent" type="checkbox"><span>Autoriser l’envoi temporaire du texte de ce support à Workers AI pour préparer cette séance. Rien n’est envoyé sans cette case.</span></label>
+      </div>
+      <label class="ai-question"><span>Que voulez-vous travailler ?</span><textarea id="aiQuestion" rows="3" placeholder="Ex. Je veux consolider mon support le plus fragile et travailler 10 minutes de prononciation."></textarea></label>
+      <div class="ai-council-actions"><button class="primary-button" id="askAiCoach" type="button">Préparer ma séance avec l’IA →</button><button class="secondary-button" id="useLocalCoach" type="button">Préparer sans IA</button></div>
+      <div class="ai-answer" id="aiAnswer" aria-live="polite"><p>Votre plan apparaîtra ici, avec des actions courtes et justifiées.</p></div>
+    </section>
+
     <section class="agent-planner" aria-labelledby="agentPlannerTitle"><div class="agent-planner-head"><div><p class="section-kicker">Organisation automatique</p><h2 id="agentPlannerTitle">Aujourd’hui, cette semaine, vos supports.</h2></div><div class="agent-plan-tabs"><button class="active" type="button" data-agent-tab="today">Aujourd’hui</button><button type="button" data-agent-tab="week">Cette semaine</button><button type="button" data-agent-tab="supports">Mes supports</button></div></div><div class="agent-plan-panel" id="agentPlanPanel"></div></section>
 
     <div class="mastery-metrics">
@@ -414,7 +441,7 @@
 
   <noscript>Sirāfiq nécessite JavaScript pour fonctionner.</noscript>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./app.js?v=111"></script>
+  <script type="module" src="./app.js?v=120"></script>
 
 <input id="filePicker"
        type="file"
@@ -505,9 +532,9 @@
   <div class="support-viewer-body" id="supportViewerBody"></div>
 </dialog>
 
-  <script type="module" src="./lot1.js?v=111"></script>
-  <script type="module" src="./writing.js?v=111"></script>
-  <script type="module" src="./pronunciation.js?v=111"></script>
-  <script type="module" src="./learning.js?v=111"></script>
+  <script type="module" src="./lot1.js?v=120"></script>
+  <script type="module" src="./writing.js?v=120"></script>
+  <script type="module" src="./pronunciation.js?v=120"></script>
+  <script type="module" src="./learning.js?v=120"></script>
 </body>
 </html>
