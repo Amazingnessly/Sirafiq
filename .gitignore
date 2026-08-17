@@ -1,0 +1,11 @@
+
+*.zip
+
+*.zip
+
+node_modules/
+.wrangler/
+
+node_modules/
+dist-worker/
+*.backup
